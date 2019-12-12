@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}注册账户-分享为赢{% endblock %}
+
+{% block content %}
+
+{% load myfilter %}
+<div class="container">
+    <div class="form-register">
+        <h3>注册账户</h3>
+        <p>加入分享为赢, 新的开始</p>
+        <hr>
+        <form action="{% url 'register' %}" , method="post">
+            {% csrf_token %}
+            {% for field in register_form %}
+            <div class="form-group">
+                {{ field.errors }}
+                {{ field.label_tag }}
+                {{ field|widget_add_class:'form-control' }}
+            </div>
+            {% endfor %}
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary" name="">注册
+                </button>
+            </div>
+        </form>
+        <hr>
+        <p>已有账号, 直接 <a href="{% url 'user_login' %}">登录</a></p>
+    </div>
+</div>
+
+<script>
+    $('.captcha').click(function () {
+        $.getJSON("/captcha/refresh/", function (result) {
+            $('.captcha').attr('src', result['image_url']);
+            $('#id_captcha_0').val(result['key'])
+        });
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,9 @@
+{{ username }}, 你好
+
+欢迎加入分享为赢!
+
+请点击以下链接确认账户:
+
+http://{{ host }}{% url 'user_confirm' token %}
+
+该邮件来自分享为赢, 不用回复.
