@@ -41,7 +41,7 @@
             <p class="text-muted">{{ answer.get_follow_nums }} 人赞同了该回答</p>
             <p class="answer-content"><a
                     href="{% url 'answer_detail' answer.id %}">
-                {{ answer.content|striptags|truncatechars:200 }}</a></p>
+                {{ answer.content|safe|striptags|truncatechars:200 }}</a></p>
             <div class="answer-meta">
                 <button type="button" class="btn btn-sm btn-primary btnvote-up"
                         onclick="follow_answer(this, {{ answer.id }})"><span

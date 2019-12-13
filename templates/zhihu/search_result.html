@@ -34,7 +34,7 @@
                                         <span
                                                 class="answer-content"><a
                                                 target="_blank"
-                                                href="{% url 'answer_detail' answer.id %}">{{ answer.content|striptags|truncatechars:200 }}</a></span>
+                                                href="{% url 'answer_detail' answer.id %}">{{ answer.content|safe|striptags|truncatechars:200 }}</a></span>
                                     </h4>
                                 {% else %}
                                     <h4 class="media-heading"><a target="_blank"
@@ -43,7 +43,7 @@
                                         <span
                                                 class="answer-content"><a
                                                 target="_blank"
-                                                href="{% url 'answer_detail' answer.id %}">{{ answer.content|striptags|truncatechars:200 }}</a></span>
+                                                href="{% url 'answer_detail' answer.id %}">{{ answer.content|safe|striptags|truncatechars:200 }}</a></span>
                                     </h4>
                                 {% endif %}
                                 <div class="answer-meta">

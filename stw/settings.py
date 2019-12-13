@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'zhihu',
+    'bbs',
     # 第三方验证码
     'captcha',
     # 富文本编辑器

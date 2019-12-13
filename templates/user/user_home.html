@@ -33,7 +33,7 @@
                 <p class="text-muted">{{ obj.get_follow_nums }} 人赞同了该回答</p>
                 <p class="answer-content"><a
                         href="{% url 'answer_detail' obj.id %}">
-                    {{ obj.content|striptags|truncatechars:200 }}</a></p>
+                    {{ obj.content|safe|striptags|truncatechars:200 }}</a></p>
                 <div class="answer-meta">
                     <button type="button"
                             class="btn btn-primary btnvote-up btn-sm"
@@ -108,7 +108,7 @@
                     人赞同了该回答</p>
                 <p class="answer-content"><a
                         href="{% url 'answer_detail' obj.answer_id %}">
-                    {{ obj.answer.content|striptags|truncatechars:200 }}</a>
+                    {{ obj.answer.content|safe|striptags|truncatechars:200 }}</a>
                 </p>
                 <div class="answer-meta">
                     <button type="button"
@@ -174,7 +174,7 @@
                     人赞同了该回答</p>
                 <p class="answer-content"><a
                         href="{% url 'answer_detail' obj.answer_id %}">
-                    {{ obj.answer.content|striptags|truncatechars:200 }}</a>
+                    {{ obj.answer.content|safe|striptags|truncatechars:200 }}</a>
                 </p>
                 <div class="answer-meta">
                     <button type="button"

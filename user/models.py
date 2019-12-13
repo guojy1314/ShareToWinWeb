@@ -55,6 +55,10 @@ class User(AbstractUser):
         '''获取回答数量'''
         return self.answer_set.count()
 
+    def get_comment_nums(self):
+        '''获取回帖数量'''
+        return self.comment_set.count()
+
     def get_topic_nums(self):
         '''获取关注话题的数量'''
         return self.topic_set.count()

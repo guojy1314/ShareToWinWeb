@@ -119,14 +119,13 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['nickname', 'gender', 'description', 'college']
+        fields = ['nickname', 'gender', 'description']
         '''
         widgets = {
             'image': forms.ClearableFileInput(attrs={'class':'form-control'}),
             'nickname': forms.TextInput(attrs={'class':'form-control'}),
             'gender': forms.CheckboxInput(attrs={'class':'form-control'}),
             'description': forms.Textarea(attrs={'class':'form-control', 'rows':3}),
-            'college': forms.TextInput(attrs={'class':'form-control'}),
         }
         labels = {
             'image': '用户头像',

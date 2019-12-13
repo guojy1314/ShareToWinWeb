@@ -31,6 +31,9 @@
                             <li><a href="{% url 'question_list' %}"
                                    target="_blank">回答</a>
                             </li>
+                            <li><a href="{% url 'pub_article' %}"
+                                   target="_blank">发帖</a>
+                            </li>
                             <!-- <li><a href="">写文章</a></li>
                             <li><a href="">写想法</a></li> -->
                         </ul>
@@ -85,7 +88,7 @@
                             <div class="answer-content">
                                 <a target="_blank"
                                    href="{% url 'answer_detail' answer.id %}">
-                                    <p>{{answer.content|striptags|truncatechars:200 }}</p>
+                                    <p>{{answer.content|safe|striptags|truncatechars:200 }}</p>
                                 </a>
                             </div>
                             <div class="answer-meta">

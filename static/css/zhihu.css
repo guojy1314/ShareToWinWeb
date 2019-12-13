@@ -222,3 +222,11 @@ h3.big-topic {
     bottom: 30px;
     cursor: pointer;
 }
+
+
+p img{
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    display: block;
+}

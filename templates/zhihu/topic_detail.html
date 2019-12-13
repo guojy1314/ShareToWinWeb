@@ -83,7 +83,7 @@
                             <div class="answer-content">
                                 <a href="{% url 'answer_detail' answer.id %}">
                                     <p>
-                                        {{ answer.content|striptags|truncatechars:200 }}</p>
+                                        {{ answer.content|safe|striptags|truncatechars:200 }}</p>
                                 </a>
                             </div>
                             <div class="answer-meta">
