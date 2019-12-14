@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -153,6 +154,9 @@ AUTHENTICATION_BACKENDS = [
     'user.views.CustomModelBackend',
 ]
 
+# login_required重定向url
+LOGIN_URL = '/login/'
+
 
 # 用户上传文件
 MEDIA_URL = '/media/'
@@ -192,9 +196,6 @@ CELERY_RESULT_BACKEND = 'redis://62.234.190.102:6379/2'
 CELERY_ACCEPT_CONTENT = ['application/json', ]
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-
-# 自定用户模型
-AUTH_USER_MODEL = 'user.User'
 
 # 分页
 ANSWER_PER_PAGE = 10

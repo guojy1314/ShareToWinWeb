@@ -87,7 +87,7 @@
                                                     匿名回答</h4>
                                                 <p class="answer-content"><a
                                                         href="{% url 'answer_detail' answer.id %}">
-                                                    {{ answer.content|striptags|truncatechars:200 }}</a></p>
+                                                    {{ answer.content|striptags|safe|truncatechars:200 }}</a></p>
                                             </div>
                                         </div>
                                     {% else %}
@@ -114,7 +114,7 @@
                                                 </h4>
                                                 <p class="answer-content"><a
                                                         href="{% url 'answer_detail' answer.id %}">
-                                                    {{ answer.content|striptags|truncatechars:200 }}</a></p>
+                                                    {{ answer.content|striptags|safe|truncatechars:200 }}</a></p>
                                             </div>
                                         </div>
                                     {% endif %}
@@ -146,7 +146,7 @@
                                                     匿名回答</h4>
                                                 <p class="answer-content"><a
                                                         href="{% url 'answer_detail' answer.id %}">
-                                                    {{ answer.content|striptags|truncatechars:200 }}</a></p>
+                                                    {{ answer.content|striptags|safe|truncatechars:200 }}</a></p>
                                             </div>
                                         </div>
                                     {% else %}
@@ -173,7 +173,7 @@
                                                 </h4>
                                                 <p class="answer-content"><a
                                                         href="{% url 'answer_detail' answer.id %}">
-                                                    {{ answer.content|striptags|truncatechars:200 }}</a></p>
+                                                    {{ answer.content|striptags|safe|truncatechars:200 }}</a></p>
                                             </div>
                                         </div>
                                     {% endif %}
