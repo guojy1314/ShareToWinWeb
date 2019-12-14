@@ -671,6 +671,7 @@ def search(request):
     # jieba分词(中文)
     seg_list = jieba.cut(keywords, cut_all=False)  # 返回generator迭代器
 
+    # 2018.7.17
     # 搜索功能直接对数据库搜索的话, 在数据库中,在要搜索的字段中上建立全文索引, 加快匹配速度
     # 使用全文检索sql而不是模糊查询, 模糊查询太慢了, 全文检索还提供检索的匹配度
 

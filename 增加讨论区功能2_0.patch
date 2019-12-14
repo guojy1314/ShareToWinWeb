@@ -1,0 +1,221 @@
+Index: templates/zhihu/explore_recommend.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- templates/zhihu/explore_recommend.html	(revision 94bfc4f54643cfb8f701a32518d8b6c8927e628a)
++++ templates/zhihu/explore_recommend.html	(date 1575908906873)
+@@ -55,7 +55,7 @@
+                             {% endif %}
+                             <p class="answer-content"><a target="_blank"
+                                                          href="{% url 'answer_detail' question.follow_est_answer.id %}">
+-                                {{ question.follow_est_answer.content|safe|striptags|truncatechars:200|safe }}</a></p>
++                                {{ question.follow_est_answer.content|striptags|truncatechars:200|safe }}</a></p>
+                             <div class="answer-meta">
+                                 <button type="button"
+                                         class="btn btn-primary btnvote-up btn-sm"
+Index: templates/zhihu/explore.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- templates/zhihu/explore.html	(revision 94bfc4f54643cfb8f701a32518d8b6c8927e628a)
++++ templates/zhihu/explore.html	(date 1575908907715)
+@@ -42,7 +42,7 @@
+                                         <p class="answer-content"><a
+                                                 target="_blank"
+                                                 href="{% url 'answer_detail' question.follow_est_answer.id %}">
+-                                            {{ question.follow_est_answer.content|safe|striptags|truncatechars:200|safe }}</a></p>
++                                            {{ question.follow_est_answer.content|striptags|truncatechars:200|safe }}</a></p>
+                                     </div>
+                                 </div>
+                                 <hr>
+@@ -87,7 +87,7 @@
+                                                     匿名回答</h4>
+                                                 <p class="answer-content"><a
+                                                         href="{% url 'answer_detail' answer.id %}">
+-                                                    {{ answer.content|safe|striptags|truncatechars:200 }}</a></p>
++                                                    {{ answer.content|striptags|truncatechars:200 }}</a></p>
+                                             </div>
+                                         </div>
+                                     {% else %}
+@@ -114,7 +114,7 @@
+                                                 </h4>
+                                                 <p class="answer-content"><a
+                                                         href="{% url 'answer_detail' answer.id %}">
+-                                                    {{ answer.content|safe|striptags|truncatechars:200 }}</a></p>
++                                                    {{ answer.content|striptags|truncatechars:200 }}</a></p>
+                                             </div>
+                                         </div>
+                                     {% endif %}
+@@ -146,7 +146,7 @@
+                                                     匿名回答</h4>
+                                                 <p class="answer-content"><a
+                                                         href="{% url 'answer_detail' answer.id %}">
+-                                                    {{ answer.content|safe|striptags|truncatechars:200 }}</a></p>
++                                                    {{ answer.content|striptags|truncatechars:200 }}</a></p>
+                                             </div>
+                                         </div>
+                                     {% else %}
+@@ -173,7 +173,7 @@
+                                                 </h4>
+                                                 <p class="answer-content"><a
+                                                         href="{% url 'answer_detail' answer.id %}">
+-                                                    {{ answer.content|safe|striptags|truncatechars:200 }}</a></p>
++                                                    {{ answer.content|striptags|truncatechars:200 }}</a></p>
+                                             </div>
+                                         </div>
+                                     {% endif %}
+Index: stw/urls.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- stw/urls.py	(revision 94bfc4f54643cfb8f701a32518d8b6c8927e628a)
++++ stw/urls.py	(date 1576310315001)
+@@ -32,7 +32,8 @@
+     answer_question, topic_question, topic_answerer, follow_topic_user, \
+     explore_recommend, follow_question_user \
+     , search
+-from bbs.views import bbsindex, pub_article, article_detail
++from bbs.views import bbsindex, pub_article, article_detail, article_list, \
++    collect_article
+ 
+ 
+ urlpatterns = [
+@@ -117,8 +118,10 @@
+ 
+     # 讨论区
+     path('bbs/', bbsindex, name='bbs'),
++    path('article_list/', article_list, name='article_list'),
+     path('pub_article/', pub_article, name='pub_article'),
+     path('article/detail/<int:article_id>/', article_detail, name='article_detail'),
++    path('article/collect_article/', collect_article, name='collect_article'),
+ ]
+ 
+ # 第三方验证码url配置
+Index: templates/base.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- templates/base.html	(revision 94bfc4f54643cfb8f701a32518d8b6c8927e628a)
++++ templates/base.html	(date 1576317102586)
+@@ -49,7 +49,7 @@
+                     <a href="{% url 'topic_list' %}">话题</a>
+                 </li>
+                 <li class="{% block bbs %}{% endblock %}">
+-                    <a href="{% url 'bbs' %}">讨论区</a>
++                    <a href="{% url 'article_list' %}">讨论区</a>
+                 </li>
+             </ul>
+             <form action="/search/" target="_blank"
+Index: zhihu/models.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- zhihu/models.py	(revision 94bfc4f54643cfb8f701a32518d8b6c8927e628a)
++++ zhihu/models.py	(date 1576314840239)
+@@ -136,4 +136,4 @@
+     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')
+     answer = models.ForeignKey(Answer, on_delete=models.CASCADE,
+                                verbose_name='回答')
+-    add_time = models.DateTimeField('添加时间', auto_now_add=True)
++    add_time = models.DateTimeField('添加时间', auto_now_add=True)
+\ No newline at end of file
+Index: bbs/views.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- bbs/views.py	(revision 94bfc4f54643cfb8f701a32518d8b6c8927e628a)
++++ bbs/views.py	(date 1576311005686)
+@@ -36,6 +36,29 @@
+     return render(request, 'bbs/bbsindex.html', context)
+ 
+ 
++@cache_page(5 * 60, key_prefix='article_list')
++def article_list(request):
++    '''回答-问题列表'''
++    articles = Article.objects.all().order_by('-pub_time').annotate(
++        comment_nums=Count('comment', distinct=True),
++        collect_nums=Count('usercollectarticle', distinct=True))
++    hot_articles = Article.objects.all().annotate(
++        comment_nums=Count('comment', distinct=True),
++        collect_nums=Count('usercollectarticle', distinct=True)).order_by(
++        '-comment_nums')
++
++    # 分页
++    articles_page = paginator_helper(request, articles,
++                                      per_page=settings.QUESTION_PER_PAGE)
++    hot_articles_page = paginator_helper(request, hot_articles,
++                                          per_page=settings.QUESTION_PER_PAGE)
++
++    context = {}
++    context['articles_page'] = articles_page
++    context['hot_articles_page'] = hot_articles_page
++    return render(request, 'bbs/article_list.html', context)
++
++
+ def article_detail(request, article_id):
+     '''帖子详情'''
+     article = get_object_or_404(Article, pk=article_id)
+@@ -61,27 +84,18 @@
+ 
+     # 问题下回答排序
+     sort_type = request.GET.get('sort_type', '')
+-    # 如果按时间排序
+-    if sort_type == 'time':
++    # 如果按点赞数数排序
++    if sort_type == 'follows':
++        article_comments = article_comments.order_by('-follow_nums')
++
++    # 默认排序, 按时间排序
++    else:
+         article_comments = article_comments.order_by('-pub_time')
+-    # 默认排序, 按点赞数数排序
+-    else:
+-        article_comments = article_comments.order_by('-follow_nums')
+ 
+     # 分页
+     page = paginator_helper(request, article_comments,
+                             per_page=settings.ANSWER_PER_PAGE)
+ 
+-    # # question归属话题, 取第一个话题
+-    # question_topic = question.topics.all().first()
+-    # # 话题相关question, 取前5个, 并排除自身
+-    # relate_questions = cache.get('relate_questions' + str(question_id))
+-    # if not relate_questions:
+-    #     relate_questions = question_topic.question_set.exclude(
+-    #         id=question_id).order_by('-read_nums')[:5]
+-    #     cache.set('relate_questions' + str(question_id), relate_questions,
+-    #               5 * 60)
+-
+     context = {}
+     context['article'] = article
+     context['has_collect_article'] = has_collect_article
+@@ -180,7 +194,7 @@
+ 
+ @login_required
+ def collect_article(request):
+-    '''收藏答案'''
++    '''收藏帖子'''
+     article_id = int(request.GET.get('article_id', ''))
+     article = get_object_or_404(Article, id=article_id)
+     collect_article_existed = UserCollectArticle.objects.filter(user=request.user,
+Index: zhihu/views.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- zhihu/views.py	(revision 94bfc4f54643cfb8f701a32518d8b6c8927e628a)
++++ zhihu/views.py	(date 1576316856517)
+@@ -671,6 +671,7 @@
+     # jieba分词(中文)
+     seg_list = jieba.cut(keywords, cut_all=False)  # 返回generator迭代器
+ 
++    # 2018.7.17
+     # 搜索功能直接对数据库搜索的话, 在数据库中,在要搜索的字段中上建立全文索引, 加快匹配速度
+     # 使用全文检索sql而不是模糊查询, 模糊查询太慢了, 全文检索还提供检索的匹配度
+ 

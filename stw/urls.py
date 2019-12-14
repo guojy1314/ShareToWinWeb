@@ -32,7 +32,8 @@ from zhihu.views import index, question_detail, answer_detail, explore, \
     answer_question, topic_question, topic_answerer, follow_topic_user, \
     explore_recommend, follow_question_user \
     , search
-from bbs.views import bbsindex, pub_article, article_detail
+from bbs.views import bbsindex, pub_article, article_detail, article_list, \
+    collect_article
 
 
 urlpatterns = [
@@ -117,8 +118,10 @@ urlpatterns = [
 
     # 讨论区
     path('bbs/', bbsindex, name='bbs'),
+    path('article_list/', article_list, name='article_list'),
     path('pub_article/', pub_article, name='pub_article'),
     path('article/detail/<int:article_id>/', article_detail, name='article_detail'),
+    path('article/collect_article/', collect_article, name='collect_article'),
 ]
 
 # 第三方验证码url配置

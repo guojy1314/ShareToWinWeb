@@ -36,6 +36,29 @@ def bbsindex(request):
     return render(request, 'bbs/bbsindex.html', context)
 
 
+@cache_page(5 * 60, key_prefix='article_list')
+def article_list(request):
+    '''回答-问题列表'''
+    articles = Article.objects.all().order_by('-pub_time').annotate(
+        comment_nums=Count('comment', distinct=True),
+        collect_nums=Count('usercollectarticle', distinct=True))
+    hot_articles = Article.objects.all().annotate(
+        comment_nums=Count('comment', distinct=True),
+        collect_nums=Count('usercollectarticle', distinct=True)).order_by(
+        '-comment_nums')
+
+    # 分页
+    articles_page = paginator_helper(request, articles,
+                                      per_page=settings.QUESTION_PER_PAGE)
+    hot_articles_page = paginator_helper(request, hot_articles,
+                                          per_page=settings.QUESTION_PER_PAGE)
+
+    context = {}
+    context['articles_page'] = articles_page
+    context['hot_articles_page'] = hot_articles_page
+    return render(request, 'bbs/article_list.html', context)
+
+
 def article_detail(request, article_id):
     '''帖子详情'''
     article = get_object_or_404(Article, pk=article_id)
@@ -61,26 +84,17 @@ def article_detail(request, article_id):
 
     # 问题下回答排序
     sort_type = request.GET.get('sort_type', '')
-    # 如果按时间排序
-    if sort_type == 'time':
-        article_comments = article_comments.order_by('-pub_time')
-    # 默认排序, 按点赞数数排序
-    else:
+    # 如果按点赞数数排序
+    if sort_type == 'follows':
         article_comments = article_comments.order_by('-follow_nums')
+
+    # 默认排序, 按时间排序
+    else:
+        article_comments = article_comments.order_by('-pub_time')
 
     # 分页
     page = paginator_helper(request, article_comments,
                             per_page=settings.ANSWER_PER_PAGE)
-
-    # # question归属话题, 取第一个话题
-    # question_topic = question.topics.all().first()
-    # # 话题相关question, 取前5个, 并排除自身
-    # relate_questions = cache.get('relate_questions' + str(question_id))
-    # if not relate_questions:
-    #     relate_questions = question_topic.question_set.exclude(
-    #         id=question_id).order_by('-read_nums')[:5]
-    #     cache.set('relate_questions' + str(question_id), relate_questions,
-    #               5 * 60)
 
     context = {}
     context['article'] = article
@@ -180,7 +194,7 @@ def cancel_follow_answer(request):
 
 @login_required
 def collect_article(request):
-    '''收藏答案'''
+    '''收藏帖子'''
     article_id = int(request.GET.get('article_id', ''))
     article = get_object_or_404(Article, id=article_id)
     collect_article_existed = UserCollectArticle.objects.filter(user=request.user,

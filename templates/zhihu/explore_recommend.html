@@ -55,7 +55,7 @@
                             {% endif %}
                             <p class="answer-content"><a target="_blank"
                                                          href="{% url 'answer_detail' question.follow_est_answer.id %}">
-                                {{ question.follow_est_answer.content|safe|striptags|truncatechars:200|safe }}</a></p>
+                                {{ question.follow_est_answer.content|striptags|truncatechars:200|safe }}</a></p>
                             <div class="answer-meta">
                                 <button type="button"
                                         class="btn btn-primary btnvote-up btn-sm"
