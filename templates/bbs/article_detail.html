@@ -4,6 +4,15 @@
 
 {% block nav_home_active %}active{% endblock %}
 
+{% block custom_js %}
+    <!-- 启用富文本编辑器样式 -->
+    {% load staticfiles %}
+    <script type="text/javascript"
+            src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript"
+            src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% endblock %}
+
 {% block content %}
 
     {% include 'bbs/article.html' %}
@@ -13,7 +22,7 @@
             <div class="col-sm-8">
                 <div class="site-box">
                     <div class="clearfix">
-                        <strong>{{ page.paginator.count }} 个回答</strong>
+                        <strong>{{ page.paginator.count }} 个回帖</strong>
                         <span class="pull-right dropdown">
           <button class="btn dropdown-toggle" data-toggle="dropdown"
                   type="button">{% if sort_type == 'follows' %}按点赞数排序{% else %}
@@ -58,7 +67,7 @@
                                         <h4 class="media-heading"><a
                                                 target="_blank"
                                                 href="{% url 'user_home' comment.author_id %}">
-                                            {{ answer.author.username }}</a>
+                                            {{ comment.author.username }}</a>
                                         </h4>
                                         <p class="text-muted">
                                             {{ comment.author.description|default_if_none:'' }}</p>
@@ -72,26 +81,26 @@
                             </p>
                             <p class="text-muted">发表于 {{ comment.pub_time }}</p>
                             <div class="answer-meta">
-                                <a href="{% url 'answer_detail' comment.id %}">
+                                <a href="{% url 'comment_detail' comment.id %}">
                                     <button type="button"
                                             class="btn btn-primary btn-sm btnvote-up">
                                         <span class="glyphicon glyphicon-triangle-top"></span>
                                         {{ comment.follow_nums }}
                                     </button>
                                 </a>
-                                <a href="{% url 'answer_detail' answer.id %}">
+                                <a href="{% url 'comment_detail' comment.id %}">
                                     <button type="button"
                                             class="btn btn-default btn-sm btnvote-down">
                                         <span class="glyphicon glyphicon-triangle-bottom"></span>
                                     </button>
                                 </a>
-                                <a href="{% url 'answer_detail' answer.id %}">
+                                <a href="{% url 'comment_detail' comment.id %}">
                                     <button type="button"
                                             class="btn btn-default btn-sm">
-                                        {{ answer.comment_nums }} 条评论
+                                        {{ comment.comment_nums }} 条评论
                                     </button>
                                 </a>
-                                <a href="{% url 'answer_detail' answer.id %}">
+                                <a href="{% url 'comment_detail' comment.id %}">
                                     <button type="button"
                                             class="btn btn-default btn-sm"><span
                                             class="glyphicon glyphicon-star"></span>收藏
@@ -103,8 +112,25 @@
                         <p>暂时没有回帖</p>
                     {% endfor %}
                 </div>
+                <div class="site-box">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {% for discuss in comment_form %}
+                            <div class="form-group">
+                                {{ discuss.errors }}
+                                {{ discuss.label_tag }}
+                                {{ discuss }}
+                            </div>
+                        {% endfor %}
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-primary"> 提交回答
+                            </button>
+                        </div>
+                    </form>
+                </div>
 
                 {% include 'zhihu/paginator.html' %}
+
 
             </div>
 

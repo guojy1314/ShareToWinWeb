@@ -15,6 +15,7 @@ class ArticleTopic(models.Model):
     description = models.CharField('话题描述', max_length=200, null=True,
                                    blank=True)
     add_time = models.DateTimeField('添加时间', auto_now_add=True)
+
     # image = models.ImageField('话题图片', upload_to='image/%Y/%m/',
     #                           default='image/default_topic.jpg', null=True,
     #                           blank=True)
@@ -75,14 +76,13 @@ class Article(models.Model):
 
 
 def get_sentinel_article():
-    return Article.objects.get_or_create(title='deleted question')[0]
+    return Article.objects.get_or_create(title='deleted article')[0]
 
 
 class Comment(models.Model):
     '''评论回帖模型'''
-    article = models.ForeignKey(Article,
-                                 on_delete=models.SET(get_sentinel_article),
-                                 verbose_name='评论帖子')
+    article = models.ForeignKey(Article, on_delete=models.SET(get_sentinel_article),
+                                verbose_name='评论帖子')
     author = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user),
                                verbose_name='评论作者')
     content = RichTextUploadingField('评论内容')
@@ -99,31 +99,31 @@ class Comment(models.Model):
     #     '''获取回答的被收藏数'''
     #     return self.usercollectcomment_set.count()
 
-    def get_comment_nums(self):
+    def get_commentcomment_nums(self):
         '''获取评论数量'''
-        return self.articlecomment_set.count()
+        return self.commentcomment_set.count()
 
     def __str__(self):
         return self.content[:50]
 
 
-class ArticleComment(models.Model):
+class CommentComment(models.Model):
     '''评论的评论模型'''
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE,
-                               verbose_name='回帖')
-    articlecomment = models.CharField('评论', max_length=300)
+                                verbose_name='回帖')
+    commentcomment = models.CharField('评论', max_length=300)
     add_time = models.DateTimeField('添加时间', auto_now_add=True)
 
     def __str__(self):
-        return self.articlecomment[:50]
+        return self.commentcomment[:50]
 
 
 class UserCollectArticle(models.Model):
     '''用户收藏帖子模型'''
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')
     article = models.ForeignKey(Article, on_delete=models.CASCADE,
-                                 verbose_name='帖子')
+                                verbose_name='帖子')
     add_time = models.DateTimeField('添加时间', auto_now_add=True)
 
 
@@ -139,9 +139,8 @@ class UserFollowComment(models.Model):
     '''用户点赞回帖模型'''
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE,
-                               verbose_name='回答')
+                                verbose_name='回答')
     add_time = models.DateTimeField('添加时间', auto_now_add=True)
-
 
 # class UserCollectAnswer(models.Model):
 #     '''用户收藏回答模型'''

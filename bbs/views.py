@@ -15,30 +15,13 @@ from django.views.decorators.cache import cache_page
 from helper.paginator_helper import paginator_helper
 from user.models import User
 from .forms import PubArticleForm, CommentForm
-from .models import Article, Comment, ArticleTopic, ArticleComment, \
+from .models import Article, Comment, ArticleTopic, CommentComment, \
     UserCollectArticle, UserFollowComment
-
-
-def bbsindex(request):
-    '''首页'''
-    # 采取分页了, 没有必要使用聚合, 数据多时, 这样聚合查询很慢
-    # 也没有必要查询一个完整的对象, 查询字段少可以优化查询速度
-    # 在模板中可以使用属性或方法获取点赞数或者评论数
-    # all_answers = Answer.objects.all().order_by('-pub_time')
-    all_articles = Article.objects.all().order_by('-pub_time')
-
-    # 分页
-    page = paginator_helper(request, all_articles,
-                            per_page=settings.ANSWER_PER_PAGE)
-
-    context = {}
-    context['page'] = page
-    return render(request, 'bbs/bbsindex.html', context)
 
 
 @cache_page(5 * 60, key_prefix='article_list')
 def article_list(request):
-    '''回答-问题列表'''
+    '''帖子列表'''
     articles = Article.objects.all().order_by('-pub_time').annotate(
         comment_nums=Count('comment', distinct=True),
         collect_nums=Count('usercollectarticle', distinct=True))
@@ -76,9 +59,9 @@ def article_detail(request, article_id):
     # 帖子的回复
     article_comments = cache.get('article_comment' + str(article_id))
     if not article_comments:
-        article_comments = Article.objects.filter(article=article).annotate(
-            follow_nums=Count('userfollowanswer', distinct=True)).annotate( \
-            comment_nums=Count('answercomment', distinct=True))
+        article_comments = Comment.objects.filter(article=article).annotate(
+            follow_nums=Count('userfollowcomment', distinct=True)).annotate( \
+            comment_nums=Count('commentcomment', distinct=True))
         cache.set('article_comments' + str(article_id), article_comments,
                   5 * 60)
 
@@ -105,44 +88,44 @@ def article_detail(request, article_id):
     return render(request, 'bbs/article_detail.html', context)
 
 
-# def answer_detail(request, answer_id):
+# def comment_detail(request, comment_id):
 #     '''回答详情'''
-#     answer = get_object_or_404(Answer, pk=answer_id)
-#     question = answer.question
+#     comment = get_object_or_404(Comment, pk=comment_id)
+#     article = comment.article
 #
-#     has_follow_question = False
-#     has_collect_answer = False
+#     has_collect_article = False
+#     has_follow_comment = False
 #     if request.user.is_authenticated:
-#         if UserFollowQuestion.objects.filter(user=request.user,
-#                                              question=question):
-#             has_follow_question = True
-#         if UserCollectAnswer.objects.filter(user=request.user, answer=answer):
-#             has_collect_answer = True
-#
-#     # 归属问题话题的相关问题, 按阅读量排序
-#     # 回答归属question归属话题, 取第一个话题
-#     question_topic = question.topics.all().first()
-#     # 话题相关question, 取前5个, 并排除自身
-#     relate_questions = cache.get('relate_questions' + str(answer_id))
-#     if not relate_questions:
-#         relate_questions = question_topic.question_set.exclude(
-#             id=answer.question_id).order_by('-read_nums')[:5]
-#         cache.set('relate_questions' + str(answer_id), relate_questions, 5 * 60)
-#     # 评论表单
-#     comment_form = CommentForm()
-#     # 评论分页
-#     answer_comments = answer.answercomment_set.all().order_by('-add_time')
-#     page = paginator_helper(request, answer_comments,
-#                             per_page=settings.COMMENT_PER_PAGE)
-#
-#     context = {}
-#     context['answer'] = answer
-#     context['has_follow_question'] = has_follow_question
-#     context['has_collect_answer'] = has_collect_answer
-#     context['relate_questions'] = relate_questions
-#     context['comment_form'] = comment_form
-#     context['page'] = page
-#     return render(request, 'zhihu/answer_detail.html', context)
+#         if UserCollectArticle.objects.filter(user=request.user,
+#                                              article=article):
+#             has_collect_article = True
+#         if UserFollowComment.objects.filter(user=request.user, comment=comment):
+#             has_follow_comment = True
+
+    # # 归属问题话题的相关问题, 按阅读量排序
+    # # 回答归属question归属话题, 取第一个话题
+    # question_topic = question.topics.all().first()
+    # # 话题相关question, 取前5个, 并排除自身
+    # relate_questions = cache.get('relate_questions' + str(answer_id))
+    # if not relate_questions:
+    #     relate_questions = question_topic.question_set.exclude(
+    #         id=answer.question_id).order_by('-read_nums')[:5]
+    #     cache.set('relate_questions' + str(answer_id), relate_questions, 5 * 60)
+    # 评论表单
+    # comment_form = CommentForm()
+    # # 评论分页
+    # answer_comments = comment.answercomment_set.all().order_by('-add_time')
+    # page = paginator_helper(request, answer_comments,
+    #                         per_page=settings.COMMENT_PER_PAGE)
+    #
+    # context = {}
+    # context['comment'] = comment
+    # context['has_collect_article'] = has_collect_article
+    # context['has_follow_comment'] = has_follow_comment
+    # context['relate_questions'] = relate_questions
+    # context['comment_form'] = comment_form
+    # context['page'] = page
+    # return render(request, 'bbs/comment_detail.html', context)
 
 
 @login_required
@@ -254,7 +237,7 @@ def comment_article(request, article_id):
     context = {}
     context['article'] = article
     context['comment_form'] = comment_form
-    return render(request, 'bbs/comment_article.html', context)
+    return render(request, 'bbs/article_detail.html', context)
 
 
 
