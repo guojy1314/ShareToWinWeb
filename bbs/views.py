@@ -1,12 +1,9 @@
-from datetime import datetime, timedelta
-
-import jieba  # 中文分词
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.db.models import Count, Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 # cache
@@ -14,8 +11,8 @@ from django.views.decorators.cache import cache_page
 
 from helper.paginator_helper import paginator_helper
 from user.models import User
-from .forms import PubArticleForm, CommentForm
-from .models import Article, Comment, ArticleTopic, CommentComment, \
+from .forms import PubArticleForm, ArticleCommentForm
+from .models import Article, Comment, ArticleTopic,  \
     UserCollectArticle, UserFollowComment
 
 
@@ -60,8 +57,9 @@ def article_detail(request, article_id):
     article_comments = cache.get('article_comment' + str(article_id))
     if not article_comments:
         article_comments = Comment.objects.filter(article=article).annotate(
-            follow_nums=Count('userfollowcomment', distinct=True)).annotate( \
-            comment_nums=Count('commentcomment', distinct=True))
+            follow_nums=Count('userfollowcomment', distinct=True))\
+            # .annotate( \
+            # comment_nums=Count('commentcomment', distinct=True))
         cache.set('article_comments' + str(article_id), article_comments,
                   5 * 60)
 
@@ -73,19 +71,22 @@ def article_detail(request, article_id):
 
     # 默认排序, 按时间排序
     else:
-        article_comments = article_comments.order_by('-pub_time')
+        article_comments = article_comments.order_by('-created')
 
     # 分页
     page = paginator_helper(request, article_comments,
                             per_page=settings.ANSWER_PER_PAGE)
+    comment_form = ArticleCommentForm()
 
     context = {}
     context['article'] = article
     context['has_collect_article'] = has_collect_article
     context['sort_type'] = sort_type
     context['page'] = page
+    context['comment_form'] = comment_form
     # context['relate_questions'] = relate_questions
-    return render(request, 'bbs/article_detail.html', context)
+    # return render(request, 'bbs/article_detail.html', context)
+    return render(request, 'bbs/detail.html', context)
 
 
 # def comment_detail(request, comment_id):
@@ -217,27 +218,67 @@ def pub_article(request):
     return render(request, 'bbs/pub_article.html', context)
 #
 #
+# @login_required
+# def comment_article(request, article_id):
+#     '''回复帖子'''
+#     comment_form = CommentForm()
+#     # article = get_object_or_404(Article, id=article_id)
+#     article = article_id
+#     if request.method == 'POST':
+#         comment_form = CommentForm(request.POST)
+#         if comment_form.is_valid():
+#             comment = Comment()
+#             comment.article = article
+#             comment.author = request.user
+#             comment.content = comment_form.cleaned_data.get('content')
+#             comment.is_anonymous = comment_form.cleaned_data.get('anonymous')
+#             comment.save()
+#             messages.info(request, '你的回帖已提交')
+#             return redirect(reverse('article_detail', args=(article.id,)))
+#
+#     context = {}
+#     context['article'] = article
+#     context['comment_form'] = comment_form
+#     return redirect(reverse('article_detail', args=(article.id,)))
+
+
 @login_required
-def comment_article(request, article_id):
-    '''回复帖子'''
-    comment_form = CommentForm()
+def post_comment(request, article_id, parent_comment_id=None):
     article = get_object_or_404(Article, id=article_id)
+
+    # 处理 POST 请求
     if request.method == 'POST':
-        comment_form = CommentForm(request.POST)
+        comment_form = ArticleCommentForm(request.POST)
         if comment_form.is_valid():
-            comment = Comment()
-            comment.article = article
-            comment.author = request.user
-            comment.content = comment_form.cleaned_data.get('content')
-            comment.is_anonymous = comment_form.cleaned_data.get('anonymous')
-            comment.save()
-            messages.info(request, '你的回帖已提交')
-            return redirect(reverse('article_detail', args=(article.id,)))
+            new_comment = Comment()
+            # new_comment = comment_form.save(commit=False)
+            new_comment.body = comment_form.cleaned_data.get('body')
+            new_comment.article = article
+            new_comment.user = request.user
 
-    context = {}
-    context['article'] = article
-    context['comment_form'] = comment_form
-    return render(request, 'bbs/article_detail.html', context)
+            # 二级回复
+            if parent_comment_id:
+                parent_comment = Comment.objects.get(id=parent_comment_id)
+                # 若回复层级超过二级，则转换为二级
+                new_comment.parent_id = parent_comment.get_root().id
+                # 被回复人
+                new_comment.reply_to = parent_comment.user
+                new_comment.save()
+                return HttpResponse('200 OK')
 
-
-
+            new_comment.save()
+            return redirect(reverse('article_detail', args=(article_id,)))
+        else:
+            return HttpResponse("表单内容有误，请重新填写。")
+    # 处理 GET 请求
+    elif request.method == 'GET':
+        comment_form = ArticleCommentForm()
+        context = {
+            'comment_form': comment_form,
+            'article_id': article_id,
+            'parent_comment_id': parent_comment_id
+        }
+        return render(request, 'bbs/reply.html', context)
+    # 处理其他请求
+    else:
+        return HttpResponse("仅接受GET/POST请求。")

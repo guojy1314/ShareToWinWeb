@@ -1,7 +1,8 @@
 from ckeditor_uploader.fields import RichTextUploadingField
+from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 from django.db import models
-
+from mptt.models import MPTTModel, TreeForeignKey
 from user.models import User
 
 
@@ -39,7 +40,7 @@ class Article(models.Model):
     title = models.CharField('文章标题', max_length=200)
     author = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user),
                                verbose_name='文章作者')
-    content = models.TextField('文章内容', null=True, blank=True)
+    content = RichTextUploadingField('文章内容', null=True, blank=True)
     topics = models.ManyToManyField(ArticleTopic, blank=True, verbose_name='文章话题')
     pub_time = models.DateTimeField('发布时间', auto_now_add=True)
     recommend = models.BooleanField('是否推荐', default=False)
@@ -52,15 +53,15 @@ class Article(models.Model):
     class Meta:
         ordering = ['-pub_time']
 
-    def get_comment_nums(self):
-        '''获取回帖评论数量'''
-        return self.comment_set.count()
+    # def get_comment_nums(self):
+    #     '''获取回帖评论数量'''
+    #     return self.parents.count()
 
-    def get_follow_est_comment(self):
-        '''获取点赞最多的回答'''
-        return self.comment_set.annotate(
-            follow_nums=models.Count('userfollowcomment')).order_by(
-            '-follow_nums').first()
+    # def get_follow_est_comment(self):
+    #     '''获取点赞最多的回答'''
+    #     return self.comment_set.annotate(
+    #         follow_nums=models.Count('userfollowcomment')).order_by(
+    #         '-follow_nums').first()
 
     def get_topic_name(self):
         '''获取文章话题名'''
@@ -79,44 +80,84 @@ def get_sentinel_article():
     return Article.objects.get_or_create(title='deleted article')[0]
 
 
-class Comment(models.Model):
-    '''评论回帖模型'''
-    article = models.ForeignKey(Article, on_delete=models.SET(get_sentinel_article),
-                                verbose_name='评论帖子')
-    author = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user),
-                               verbose_name='评论作者')
-    content = RichTextUploadingField('评论内容')
-    pub_time = models.DateTimeField('发布时间', auto_now_add=True)
-    voteup_nums = models.IntegerField('认同数', default=0)
-    # votedown_nums = models.IntegerField('不认同数', default=0)
-    is_anonymous = models.BooleanField('匿名回答', default=False)
+# 2019年12月16日23:29:09 多级评论尝试
+class Comment(MPTTModel):
+    article = models.ForeignKey(
+        Article,
+        on_delete=models.CASCADE,
+        related_name='comment'
+    )
 
-    def get_follow_nums(self):
-        '''获取评论点赞数'''
-        return self.userfollowcomment_set.count()
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='comment'
+    )
 
-    # def get_collect_nums(self):
-    #     '''获取回答的被收藏数'''
-    #     return self.usercollectcomment_set.count()
+    # mptt树形结构
+    parent = TreeForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='children'
+    )
 
-    def get_commentcomment_nums(self):
-        '''获取评论数量'''
-        return self.commentcomment_set.count()
+    # 记录二级评论回复给谁, str
+    reply_to = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='replyers'
+    )
+
+    body = RichTextField('评论内容')
+    created = models.DateTimeField(auto_now_add=True)
+
+    class MPTTMeta:
+        order_insertion_by = ['created']
 
     def __str__(self):
-        return self.content[:50]
+        return self.body[:20]
+
+# class Comment(models.Model):
+#     '''评论回帖模型'''
+#     article = models.ForeignKey(Article, on_delete=models.SET(get_sentinel_article),
+#                                 verbose_name='评论帖子')
+#     author = models.ForeignKey(User, on_delete=models.SET(get_sentinel_user),
+#                                verbose_name='评论作者')
+#     content = RichTextUploadingField('评论内容')
+#     pub_time = models.DateTimeField('发布时间', auto_now_add=True)
+#     voteup_nums = models.IntegerField('认同数', default=0)
+#     is_anonymous = models.BooleanField('匿名回答', default=False)
+#
+#     def get_follow_nums(self):
+#         '''获取评论点赞数'''
+#         return self.userfollowcomment_set.count()
+#
+#     # def get_collect_nums(self):
+#     #     '''获取回答的被收藏数'''
+#     #     return self.usercollectcomment_set.count()
+#
+#     def get_commentcomment_nums(self):
+#         '''获取评论数量'''
+#         return self.commentcomment_set.count()
+#
+#     def __str__(self):
+#         return self.content[:50]
 
 
-class CommentComment(models.Model):
-    '''评论的评论模型'''
-    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')
-    comment = models.ForeignKey(Comment, on_delete=models.CASCADE,
-                                verbose_name='回帖')
-    commentcomment = models.CharField('评论', max_length=300)
-    add_time = models.DateTimeField('添加时间', auto_now_add=True)
-
-    def __str__(self):
-        return self.commentcomment[:50]
+# class CommentComment(models.Model):
+#     '''评论的评论模型'''
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='用户')
+#     comment = models.ForeignKey(Comment, on_delete=models.CASCADE,
+#                                 verbose_name='回帖')
+#     commentcomment = models.CharField('评论', max_length=300)
+#     add_time = models.DateTimeField('添加时间', auto_now_add=True)
+#
+#     def __str__(self):
+#         return self.commentcomment[:50]
 
 
 class UserCollectArticle(models.Model):

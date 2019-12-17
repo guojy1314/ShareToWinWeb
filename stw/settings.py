@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     # 富文本编辑器
     'ckeditor',
     'ckeditor_uploader',
+    # 树形评论
+    'mptt',
 ]
 
 MIDDLEWARE = [
@@ -99,6 +101,7 @@ DATABASES = {
         }
     }
 }
+DATABASES['default']['OPTIONS']['init_command'] = "SET sql_mode='STRICT_TRANS_TABLES'"
 
 
 # Password validation

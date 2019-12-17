@@ -1,6 +1,8 @@
 from django import forms
-from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from .models import ArticleTopic
+from ckeditor.fields import CKEditorWidget
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from .models import Comment
 
 
 class PubArticleForm(forms.Form):
@@ -14,13 +16,14 @@ class PubArticleForm(forms.Form):
                                                 'class': 'selectpicker form-control',
                                                 'data-live-search': 'true',
                                                 'title': '请选择分类'}))
-    content = forms.CharField(label='帖子内容', widget=forms.Textarea(
-        attrs={'class': 'form-control', 'rows': '3'}), required=False)
+    content = forms.CharField(label='帖子内容', widget=CKEditorUploadingWidget(),
+                              required=False)
     anonymous = forms.BooleanField(label='匿名提问', required=False)
 
 
-class CommentForm(forms.Form):
+class ArticleCommentForm(forms.Form):
     '''回帖表单'''
-    content = forms.CharField(label='回帖', widget=CKEditorUploadingWidget(),
-                              required=True)
-    anonymous = forms.BooleanField(label='匿名回帖', required=False)
+    body = forms.CharField(label='回帖', widget=CKEditorWidget(), required=True)
+    # class Meta:
+    #     model = Comment
+    #     fields = ['body']

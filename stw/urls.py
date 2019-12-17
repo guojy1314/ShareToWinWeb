@@ -18,7 +18,7 @@ from zhihu.views import index, question_detail, answer_detail, explore, \
     explore_recommend, follow_question_user \
     , search
 from bbs.views import pub_article, article_detail, article_list, \
-    collect_article
+    collect_article, post_comment
 
 
 urlpatterns = [
@@ -106,9 +106,11 @@ urlpatterns = [
     path('pub_article/', pub_article, name='pub_article'),
     path('article/detail/<int:article_id>/', article_detail, name='article_detail'),
     path('article/collect_article/', collect_article, name='collect_article'),
+    path('post_comment/<int:article_id>/', post_comment, name='post_comment'),
+    path('post_comment/<int:article_id>/<int:parent_comment_id>', post_comment, name='comment_reply'),
 ]
 
-# 第三方验证码url配置
+# 第三方验证码url配置1
 urlpatterns += [path('captcha/', include('captcha.urls'))]
 # 在调试模式中访问用户上传文件需配置
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

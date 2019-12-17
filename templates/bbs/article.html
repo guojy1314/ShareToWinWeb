@@ -30,7 +30,7 @@
                         <h3><a href="
 {% url 'article_detail' article.id %}">{{ article.title }}</a></h3>
                     </div>
-                    <p>{{ article.content }}</p>
+                    <p>{{ article.content|safe }}</p>
                     <div class="question-meta">
                         <button type="button" class="btn btn-primary"
                                 onclick="collect_article(this, {{ article.id }})">

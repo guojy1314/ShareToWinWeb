@@ -2,6 +2,7 @@
 
 {% block title %}发布讨论帖-分享为赢{% endblock %}
 
+
 {% block content %}
     {% load staticfiles %}
     {% load myfilter %}
@@ -46,6 +47,12 @@
 {% block custom_js %}
     <!-- 下拉菜单js -->
     <script src="{% static 'js/bootstrap-select.min.js' %}"></script>
+        <!-- 启用富文本编辑器样式 -->
+    {% load staticfiles %}
+    <script type="text/javascript"
+            src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript"
+            src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
 {% endblock %}
 
 {% block custom_css %}
