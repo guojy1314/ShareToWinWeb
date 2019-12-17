@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}帖子详情-分享为赢{% endblock %}
+
+{% block nav_home_active %}active{% endblock %}
+
+{% block custom_js %}
+    <!-- 启用富文本编辑器样式 -->
+    {% load staticfiles %}
+    <script type="text/javascript"
+            src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+    <script type="text/javascript"
+            src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    {% include 'bbs/article.html' %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="site-box">
+                                               <hr>
+            {% if user.is_authenticated %}
+                        <form action="{% url 'post_comment' article.id %}"
+                              method='post'>
+                            {% csrf_token %}
+                           {% for field in comment_form %}
+                                <div class="form-group">
+                                    {{ field.errors }}
+                                    {{ field.as_widget }}
+                                </div>
+                            {% endfor %}
+                            <p class="alert alert-success hidden"
+                               id="submit-info"></p>
+                            <div class="text-right">
+                                <button id="comment-submit"
+                                        class="btn btn-primary"
+                                        type="submit">评论
+                                </button>
+                            </div>
+                        </form>
+                <br>
+            {% else %}
+                <br>
+                <h5 class="row justify-content-center">
+                    请<a href="{% url 'user_login' %}">登录</a>后回复
+                </h5>
+                <br>
+            {% endif %}
+                    <div class="clearfix">
+                        <strong>{{ page.paginator.count }} 个回帖</strong>
+                        <span class="pull-right dropdown">
+          <button class="btn dropdown-toggle" data-toggle="dropdown"
+                  type="button">{% if sort_type == 'follows' %}按点赞数排序{% else %}
+              默认时间排序{% endif %}<span
+                  class="caret"></span></button>
+          <ul class="dropdown-menu">
+            <li class="{% if sort_type != 'follows' %}active{% endif %}"><a
+                    href="{% url 'article_detail' article.id %}">默认时间排序</a></li>
+            <li class="{% if sort_type == 'follows' %}active{% endif %}"><a
+                    href="?sort_type=follows">按点赞数排序</a></li>
+          </ul>
+        </span>
+                    </div>
+                    <hr>
+                    <!-- 显示评论 -->
+                    {% load mptt_tags %}
+                    {% for comments in page.object_list %}
+                        <div id="comment-list">
+                            <!-- 遍历树形结构 -->
+                            {% recursetree comments %}
+                                {% with comment=node %}
+                                    <div class="{% if comment.reply_to %}
+                                    offset-1 col-11
+                                    {% else %}
+                                    col-12
+                                    {% endif %}"
+                                         id="comment_elem_{{ comment.id }}"
+                                    >
+                                        <hr>
+                                        <p>
+                                            <strong style="color: pink">
+                                                {{ comment.user }}
+                                            </strong>
+
+                                            <!-- 显示被回复人 -->
+                                            {% if comment.reply_to %}
+                                                <i class="far fa-arrow-alt-circle-right"
+                                                   style="color: cornflowerblue;"
+                                                ></i>
+                                                <strong style="color: pink">
+                                                    {{ comment.reply_to }}
+                                                </strong>
+                                            {% endif %}
+
+                                        </p>
+                                        <div>{{ comment.body|safe }}</div>
+
+                                        <div>
+                                <span style="color: gray">
+                                    {{ comment.created|date:"Y-m-d H:i" }}
+                                </span>
+
+                                            <!-- 加载 modal 的按钮 -->
+                                            {% if user.is_authenticated %}
+                                                <button type="button"
+                                                        class="btn btn-light btn-sm text-muted"
+                                                        onclick="load_modal({{ article.id }}, {{ comment.id }})"
+                                                >
+                                                    回复
+                                                </button>
+                                            {% else %}
+                                                <a class="btn btn-light btn-sm text-muted"
+                                                   href="{% url 'user_login' %}"
+                                                >
+                                                    回复
+                                                </a>
+                                            {% endif %}
+                                        </div>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade"
+                                             id="comment_{{ comment.id }}"
+                                             tabindex="-1"
+                                             role="dialog"
+                                             aria-labelledby="CommentModalCenter"
+                                             aria-hidden="true"
+                                        >
+                                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                <div class="modal-content" style="height: 480px">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalCenterTitle">
+                                                            回复 {{ comment.user }}：</h5>
+                                                    </div>
+                                                    <div class="modal-body" id="modal_body_{{ comment.id }}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {% if not comment.is_leaf_node %}
+                                            <div class="children">
+                                                {{ children }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                {% endwith %}
+                            {% endrecursetree %}
+                        </div>
+                        </div>
+                    {% empty %}
+                        <p>暂时没有回帖</p>
+                    {% endfor %}
+
+        </div>
+
+        {% include 'zhihu/paginator.html' %}
+
+
+    </div>
+
+    </div>
+    </div>
+
+{% endblock %}
+
+<script>
+    // 加载 modal
+    function load_modal(article_id, comment_id) {
+        let modal_body = '#modal_body_' + comment_id;
+        let modal_id = '#comment_' + comment_id;
+
+        // 加载编辑器
+        if ($(modal_body).children().length === 0) {
+            let content = '<iframe src="/post_comment/' +
+                article_id +
+                '/' +
+                comment_id +
+                '" frameborder="0" style="width: 100%; height: 100%;"></iframe>';
+            $(modal_body).append(content);
+        }
+        ;
+
+        $(modal_id).modal('show');
+    };
+
+</script>
