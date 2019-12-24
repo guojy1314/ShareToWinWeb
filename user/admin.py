@@ -3,6 +3,11 @@ from django.contrib import admin
 from .models import User, CheckCode, UserRelationship
 
 
+admin.site.site_header = '分享为赢后台管理'
+admin.site.site_title = '登录后台管理'
+admin.site.index_title = '后台管理'
+
+
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'nickname', 'email')
 

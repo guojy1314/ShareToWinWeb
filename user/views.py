@@ -57,7 +57,7 @@ def register(request):
                              host=request.get_host(), username=user.username,
                              token=token)
             # 网页显示账户注册成功消息
-            messages.info(request, '账户注册成功！')
+            messages.info(request, '账户注册成功！请去注册邮箱验证确认邮件！')
             return redirect(reverse('user_login'))
         else:
             pass

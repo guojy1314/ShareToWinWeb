@@ -2,7 +2,7 @@
 <dataSource name="stw">
   <database-model serializer="dbm" rdbms="MYSQL" format-version="4.10">
     <root id="1">
-      <ServerVersion>5.5.60</ServerVersion>
+      <ServerVersion>5.5.64</ServerVersion>
       <RdbmsFlavour>MariaDB</RdbmsFlavour>
       <DefaultEngine>InnoDB</DefaultEngine>
       <DefaultTmpEngine>InnoDB</DefaultTmpEngine>
