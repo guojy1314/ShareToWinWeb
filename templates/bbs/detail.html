@@ -73,105 +73,112 @@
                     {% endif %}
                     <div class="clearfix">
                         <strong>{{ page.paginator.count }} 个回帖</strong>
-                        <span class="pull-right dropdown">
-          <button class="btn dropdown-toggle" data-toggle="dropdown"
-                  type="button">{% if sort_type == 'follows' %}按点赞数排序{% else %}
-              默认时间排序{% endif %}<span
-                  class="caret"></span></button>
-          <ul class="dropdown-menu">
-            <li class="{% if sort_type != 'follows' %}active{% endif %}"><a
-                    href="{% url 'article_detail' article.id %}">默认时间排序</a></li>
-            <li class="{% if sort_type == 'follows' %}active{% endif %}"><a
-                    href="?sort_type=follows">按点赞数排序</a></li>
-          </ul>
-        </span>
-                      <!-- 显示评论 -->
+
+                        <!-- 显示评论 -->
                         <div>
-                        <!-- 遍历树形结构 -->
-                        {% load mptt_tags %}
-                        {% recursetree page.object_list %}
-                            <!-- 给 node 取个别名 comment -->
-                            {% with comment=node %}
-                                <div class="{% if comment.reply_to %}
+                            <!-- 遍历树形结构 -->
+                            {% load mptt_tags %}
+                            {% recursetree page.object_list %}
+                                <!-- 给 node 取个别名 comment -->
+                                {% with comment=node %}
+                                    <div class="{% if comment.reply_to %}
                         col-sm-offset-2
                         {% else %}
                         col-sm-8
                         {% endif %}"
-                                >
-                                    <hr>
-                                    <p>
-                                        <strong style="color: pink">
-                                            {{ comment.user }}
-                                        </strong>
+                                    >
+                                        <hr>
 
                                         {% if comment.reply_to %}
-                                            <i class="far fa-arrow-alt-circle-right"
-                                               style="color: cornflowerblue;"
-                                            ></i>
-                                            <strong style="color: pink">
-                                                {{ comment.reply_to }}
-                                            </strong>
+                                            <p>
+                                                <strong style="color: teal">
+                                                    <a target="_blank" href="{% url 'user_home' comment.user_id %}">
+                                                        {{ comment.user }}</a>
+                                                </strong>
+                                                <i class="far fa-arrow-alt-circle-right"
+                                                   style="color: black;"></i>
+                                                <strong style="color: teal">
+                                                    <a target="_blank"
+                                                       href="{% url 'user_home' comment.reply_to_id %}">
+                                                        {{ comment.reply_to }}</a>
+                                                </strong>
+                                            </p>
+                                        {% else %}
+                                            <div class="media">
+                                                <a target="_blank"
+                                                   href="{% url 'user_home' comment.user_id %}"
+                                                   class="media-left"><img width="24"
+                                                                           height="24"
+                                                                           src="
+                                                                                   {{ MEDIA_URL }}{{ comment.user.image }}"
+                                                                           alt="头像"
+                                                                           class="media-object"></a>
+                                                <div class="media-body">
+                                                    <strong style="color: teal">
+                                                        <a target="_blank" href="{% url 'user_home' comment.user_id %}">
+                                                            {{ comment.user }}</a>
+                                                    </strong>
+
+                                                </div>
+                                            </div>
                                         {% endif %}
 
-                                    </p>
-                                    <div>{{ comment.body|safe }}</div>
+                                        <div>{{ comment.body|safe }}</div>
 
-                                    <div>
+                                        <div>
                     <span style="color: gray">
                         {{ comment.created|date:"Y-m-d H:i" }}
                     </span>
 
-                                        <!-- 加载 modal 的按钮 -->
-                                        {% if user.is_authenticated %}
-                                            <button type="button"
-                                                    class="btn btn-light btn-sm text-muted"
-                                                    onclick="load_modal({{ article.id }}, {{ comment.id }})"
-                                            >
-                                                回复
-                                            </button>
-                                        {% else %}
-                                            <a class="btn btn-light btn-sm text-muted"
-                                               href="{% url 'user_login' %}"
-                                            >
-                                                回复
-                                            </a>
+                                            <!-- 加载 modal 的按钮 -->
+                                            {% if user.is_authenticated %}
+                                                <button type="button"
+                                                        class="btn btn-light btn-sm text-muted"
+                                                        onclick="load_modal({{ article.id }}, {{ comment.id }})"
+                                                >
+                                                    回复
+                                                </button>
+                                            {% else %}
+                                                <a class="btn btn-light btn-sm text-muted"
+                                                   href="{% url 'user_login' %}"
+                                                >
+                                                    回复
+                                                </a>
+                                            {% endif %}
+                                        </div>
+
+                                        <!-- Modal -->
+                                        <div class="modal fade"
+                                             id="comment_{{ comment.id }}"
+                                             tabindex="-1"
+                                             role="dialog"
+                                             aria-labelledby="CommentModalCenter"
+                                             aria-hidden="true"
+                                        >
+                                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                                                <div class="modal-content" style="height: 500px">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalCenterTitle">
+                                                            回复 {{ comment.user }}：</h5>
+                                                    </div>
+                                                    <div class="modal-body" id="modal_body_{{ comment.id }}"></div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        {% if not comment.is_leaf_node %}
+                                            <div class="children">
+                                                {{ children }}
+                                            </div>
                                         {% endif %}
                                     </div>
 
-                                    <!-- Modal -->
-                                    <div class="modal fade"
-                                         id="comment_{{ comment.id }}"
-                                         tabindex="-1"
-                                         role="dialog"
-                                         aria-labelledby="CommentModalCenter"
-                                         aria-hidden="true"
-                                    >
-                                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                            <div class="modal-content" style="height: 480px">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalCenterTitle">
-                                                        回复 {{ comment.user }}：</h5>
-                                                </div>
-                                                <div class="modal-body" id="modal_body_{{ comment.id }}"></div>
-                                            </div>
 
-                                        </div>
-                                    </div>
-
-                                    {% if not comment.is_leaf_node %}
-                                        <div class="children">
-                                            {{ children }}
-                                        </div>
-                                    {% endif %}
-                                </div>
-
-
-                            {% endwith %}
-                        {% endrecursetree %}
+                                {% endwith %}
+                            {% endrecursetree %}
+                        </div>
                     </div>
-                    </div>
-
-
 
 
                 </div>

@@ -97,8 +97,8 @@
                                 <a target="_blank"
                                    href="{% url 'user_home' comment.user_id %}"
                                    class="media-left"><img width="24"
+                                                           height="24"
                                                            src="
-
                                                                    {{ MEDIA_URL }}{{ comment.user.image }}"
                                                            alt="头像"
                                                            class="media-object"></a>
@@ -148,6 +148,7 @@
                         <a target="_blank"
                            href="{% url 'user_home' answer.author_id %}"
                            class="media-left"><img width="60"
+                                                   height="60"
                                                    src="
 
                                                            {{ MEDIA_URL }}{{ answer.author.image }}"

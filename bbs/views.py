@@ -54,24 +54,25 @@ def article_detail(request, article_id):
             has_collect_article = True
 
     # 帖子的回复
-    article_comments = cache.get('article_comment' + str(article_id))
-    if not article_comments:
-        article_comments = Comment.objects.filter(article=article).annotate(
-            follow_nums=Count('userfollowcomment', distinct=True))\
-            # .annotate( \
-            # comment_nums=Count('commentcomment', distinct=True))
-        cache.set('article_comments' + str(article_id), article_comments,
-                  5 * 60)
+    article_comments = Comment.objects.filter(article=article)
+    # article_comments = cache.get('article_comment' + str(article_id))
+    # if not article_comments:
+    #     article_comments = Comment.objects.filter(article=article).annotate(
+    #         follow_nums=Count('userfollowcomment', distinct=True))\
+    #         # .annotate( \
+    #         # comment_nums=Count('commentcomment', distinct=True))
+    #     cache.set('article_comments' + str(article_id), article_comments,
+    #               5 * 60)
 
-    # 问题下回答排序
-    sort_type = request.GET.get('sort_type', '')
-    # 如果按点赞数数排序
-    if sort_type == 'follows':
-        article_comments = article_comments.order_by('-follow_nums')
-
-    # 默认排序, 按时间排序
-    else:
-        article_comments = article_comments.order_by('-created')
+    # # 问题下回答排序
+    # sort_type = request.GET.get('sort_type', '')
+    # # 如果按点赞数数排序
+    # if sort_type == 'follows':
+    #     article_comments = article_comments.order_by('-follow_nums')
+    #
+    # # 默认排序, 按时间排序
+    # else:
+    #     article_comments = article_comments.order_by('-created')
 
     # 分页
     page = paginator_helper(request, article_comments,
@@ -81,7 +82,7 @@ def article_detail(request, article_id):
     context = {}
     context['article'] = article
     context['has_collect_article'] = has_collect_article
-    context['sort_type'] = sort_type
+    # context['sort_type'] = sort_type
     context['page'] = page
     context['comment_form'] = comment_form
     # context['relate_questions'] = relate_questions

@@ -170,7 +170,8 @@ CKEDITOR_UPLOAD_PATH = 'uploads/'
 
 CKEDITOR_CONFIGS = {
     'default': {
-        'width': '100%',
+        'width': 'auto',
+        'height': '300px',
     }
 }
 
@@ -181,8 +182,8 @@ CACHES = {
         'LOCATION': 'redis://62.234.190.102:6379/1',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'SOCKET_CONNECT_TIMEOUT': 5,
-            'SOCKET_TIMEOUT': 5,
+            'SOCKET_CONNECT_TIMEOUT': 10,
+            'SOCKET_TIMEOUT': 10,
             'CONNECTION_POOL_KWARGS': {'max_connections': 100},
         },
 
