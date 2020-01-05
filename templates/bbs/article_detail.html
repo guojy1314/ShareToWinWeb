@@ -23,18 +23,6 @@
                 <div class="site-box">
                     <div class="clearfix">
                         <strong>{{ page.paginator.count }} 个回帖</strong>
-                        <span class="pull-right dropdown">
-          <button class="btn dropdown-toggle" data-toggle="dropdown"
-                  type="button">{% if sort_type == 'follows' %}按点赞数排序{% else %}
-              默认时间排序{% endif %}<span
-                  class="caret"></span></button>
-          <ul class="dropdown-menu">
-            <li class="{% if sort_type != 'follows' %}active{% endif %}"><a
-                    href="{% url 'article_detail' article.id %}">默认时间排序</a></li>
-            <li class="{% if sort_type == 'follows' %}active{% endif %}"><a
-                    href="?sort_type=follows">按点赞数排序</a></li>
-          </ul>
-        </span>
                     </div>
                     <hr>
 
@@ -131,7 +119,28 @@
 
                 {% include 'zhihu/paginator.html' %}
 
+            </div>
 
+            <div class="col-sm-4">
+                <div class="site-box">
+                    <h4>关于作者</h4>
+                    <hr>
+                    <div class="media">
+                            <a target="_blank"
+                               href="{% url 'user_home' article.author_id %}"
+                               class="media-left">
+                                <img width="60" height="60"
+                                     src="{{ MEDIA_URL }}{{ article.author.image }}"
+                                     alt="头像" class="media-object">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading"><a target="_blank"
+                                                             href="{% url 'user_home' article.author_id %}">
+                                    {{ article.author.nickname }}</a></h4>
+                                <p>{{ article.author.description|default_if_none:'' }}</p>
+                            </div>
+                        </div>
+                </div>
             </div>
 
         </div>

@@ -211,6 +211,22 @@ def user_collect_answer(request, user_id):
 
 
 @cache_page(60)
+def user_collect_article(request, user_id):
+    '''用户主页--收藏的帖子'''
+    user = get_object_or_404(User, id=user_id)
+    user_collect_articles = user.usercollectarticle_set.all().order_by(
+        '-add_time')
+    # 取出article对象
+    user_collect_articles = [obj.article for obj in user_collect_articles]
+    user_collect_articles_page = paginator_helper(request, user_collect_articles,
+                                                 per_page=settings.ANSWER_PER_PAGE)
+    context = {}
+    context['user'] = user
+    context['user_collect_articles_page'] = user_collect_articles_page
+    return render(request, 'user/user_collect_article.html', context)
+
+
+@cache_page(60)
 def user_follow_topic(request, user_id):
     '''用户主页--关注话题'''
     user = get_object_or_404(User, id=user_id)
@@ -252,6 +268,24 @@ def user_follow_question(request, user_id):
     context['user'] = user
     context['user_follow_questions_page'] = user_follow_questions_page
     return render(request, 'user/user_follow_question.html', context)
+
+
+@cache_page(60)
+def user_follow_comment(request, user_id):
+    '''用户主页--点赞回答'''
+    user = get_object_or_404(User, id=user_id)
+    # 用户点赞的回答
+    user_follow_comments = user.userfollowcomment_set.all().order_by(
+        '-add_time')
+    # 取出回答对象
+    user_follow_comments = [obj.comment for obj in user_follow_comments]
+    user_follow_comments_page = paginator_helper(request,
+                                                 user_follow_comments,
+                                                  per_page=settings.QUESTION_PER_PAGE)
+    context = {}
+    context['user'] = user
+    context['user_follow_comments_page'] = user_follow_comments_page
+    return render(request, 'user/user_follow_comment.html', context)
 
 
 @cache_page(60)

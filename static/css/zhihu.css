@@ -223,10 +223,61 @@ h3.big-topic {
     cursor: pointer;
 }
 
-
-p img{
+p img {
     width: auto;
     height: auto;
     max-width: 100%;
     display: block;
 }
+
+.GlobalWrite {
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    overflow: visible;
+    align-items: center;
+}
+
+.GlobalWrite, .GlobalWrite-navItem {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.GlobalWrite-navItem {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    cursor: pointer;
+    -webkit-box-flex: 0;
+    -ms-flex: 0 0 98px;
+    flex: 0 0 98px;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    height: 94px;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    position: relative;
+}
+
+
+
+.GlobalWrite-navIcon {
+    color: #8590a6;
+    margin-bottom: 6px;
+}
+
+.box-wrap {
+    text-align: center;
+    overflow: hidden;
+}
+
+.box {
+    width: 31%;
+    margin: 1%;
+    border-radius: 10%;
+    float: left;
+}
+

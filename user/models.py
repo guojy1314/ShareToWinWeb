@@ -67,9 +67,17 @@ class User(AbstractUser):
         '''获取收藏的回答数量'''
         return self.usercollectanswer_set.count()
 
+    def get_collect_article_nums(self):
+        '''获取收藏的回答数量'''
+        return self.usercollectarticle_set.count()
+
     def get_follow_question_nums(self):
         '''获取关注的问题数量'''
         return self.userfollowquestion_set.all().count()
+
+    def get_follow_comment_nums(self):
+        '''获取点赞的回帖数量'''
+        return self.userfollowcomment_set.all().count()
 
     def get_answer_by_followed_nums(self):
         '''获取所有回答的被关注数量'''

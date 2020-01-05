@@ -30,7 +30,7 @@
                         <h3><a href="
 {% url 'question_detail' question.id %}">{{ question.title }}</a></h3>
                     </div>
-                    <p>{{ question.content }}</p>
+                    <p>{{ question.content|safe }}</p>
                     <div class="question-meta">
                         <button type="button" class="btn btn-primary"
                                 onclick="follow_question(this, {{ question.id }})">

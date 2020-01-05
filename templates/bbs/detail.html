@@ -32,6 +32,34 @@
             $(modal_id).modal('show');
         };
 
+        //点赞回帖
+        function follow_comment(dom, comment_id) {
+            var old_path = location.pathname;
+            $.ajax({
+                type: 'GET',
+                async: true,
+                url: "{% url 'add_follow_comment' %}",
+                data: {'comment_id': comment_id},
+                cache: false,
+                success: function (data) {
+                    if (data.status == 'success') {
+                        if (data.reason == 'add') {
+                            var nums = parseInt($(dom).text()) + 1;
+                            $(dom).html('<span class="glyphicon glyphicon-triangle-top"></span> ' + nums);
+                        } else if (data.reason == 'cancel') {
+                            var nums = parseInt($(dom).text()) - 1;
+                            $(dom).html('<span class="glyphicon glyphicon-triangle-top"></span> ' + nums);
+                        }
+                    } else {
+                        location.href = "{% url 'user_login' %}" + '?next=' + old_path;
+                    }
+                },
+                error: function (xhr, err_msg, error) {
+                    alert('请求出错');
+                },
+            });
+        }
+
     </script>
 
 {% endblock %}
@@ -110,6 +138,7 @@
                                                    class="media-left"><img width="24"
                                                                            height="24"
                                                                            src="
+
                                                                                    {{ MEDIA_URL }}{{ comment.user.image }}"
                                                                            alt="头像"
                                                                            class="media-object"></a>
@@ -145,6 +174,13 @@
                                                     回复
                                                 </a>
                                             {% endif %}
+
+                                        <button type="button"
+                                                class="btn btn-primary btn-sm btnvote-up"
+                                                onclick="follow_comment(this, {{ comment.id }})">
+                                            <span class="glyphicon glyphicon-triangle-top"></span>
+                                            {{ comment.get_follow_nums }}
+                                        </button>
                                         </div>
 
                                         <!-- Modal -->
@@ -185,6 +221,28 @@
 
                 {% include 'zhihu/paginator.html' %}
 
+            </div>
+
+            <div class="col-sm-4">
+                <div class="site-box">
+                    <h4>关于作者</h4>
+                    <hr>
+                    <div class="media">
+                        <a target="_blank"
+                           href="{% url 'user_home' article.author_id %}"
+                           class="media-left">
+                            <img width="60" height="60"
+                                 src="{{ MEDIA_URL }}{{ article.author.image }}"
+                                 alt="头像" class="media-object">
+                        </a>
+                        <div class="media-body">
+                            <h4 class="media-heading"><a target="_blank"
+                                                         href="{% url 'user_home' article.author_id %}">
+                                {{ article.author.nickname }}</a></h4>
+                            <p>{{ article.author.description|default_if_none:'' }}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>

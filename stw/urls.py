@@ -8,7 +8,7 @@ from user.views import register, user_login, user_logout, user_confirm, \
     get_check_code \
     , edit_profile, update_image, change_password, change_email_request, \
     change_email, user_collect_answer, user_follow_topic, user_follow_question, \
-    user_follow_user \
+    user_follow_user, user_collect_article, user_follow_comment \
     , user_followed_by_user, user_topic_answer, follow_user, delete_answer
 from zhihu.views import index, question_detail, answer_detail, explore, \
     topic_list, topic_detail, add_follow_answer, cancel_follow_answer, \
@@ -18,7 +18,7 @@ from zhihu.views import index, question_detail, answer_detail, explore, \
     explore_recommend, follow_question_user \
     , search
 from bbs.views import pub_article, article_detail, article_list, \
-    collect_article, post_comment
+    collect_article, post_comment, add_follow_comment, cancel_follow_comment
 
 
 urlpatterns = [
@@ -85,10 +85,14 @@ urlpatterns = [
          name='change_email'),
     path('user/<int:user_id>/collect_answer/', user_collect_answer,
          name='user_collect_answer'),
+    path('user/<int:user_id>/collect_article/', user_collect_article,
+         name='user_collect_article'),
     path('user/<int:user_id>/follow_topic/', user_follow_topic,
          name='user_follow_topic'),
     path('user/<int:user_id>/follow_question/', user_follow_question,
          name='user_follow_question'),
+    path('user/<int:user_id>/follow_comment/', user_follow_comment,
+         name='user_follow_comment'),
     path('user/<int:user_id>/follow_user/', user_follow_user,
          name='user_follow_user'),
     path('user/<int:user_id>/followed_by_user/', user_followed_by_user,
@@ -106,6 +110,10 @@ urlpatterns = [
     path('pub_article/', pub_article, name='pub_article'),
     path('article/detail/<int:article_id>/', article_detail, name='article_detail'),
     path('article/collect_article/', collect_article, name='collect_article'),
+    path('article/add_follow_comment/', add_follow_comment,
+         name='add_follow_comment'),
+    path('article/cancel_follow_comment/', cancel_follow_comment,
+         name='cancel_follow_comment'),
     path('post_comment/<int:article_id>/', post_comment, name='post_comment'),
     path('post_comment/<int:article_id>/<int:parent_comment_id>', post_comment, name='comment_reply'),
 ]

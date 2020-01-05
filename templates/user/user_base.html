@@ -72,6 +72,12 @@
                                     <a href="{% url 'user_follow_question' user.id %}">关注的问题</a>
                                 </li>
                                 <li>
+                                    <a href="{% url 'user_collect_article' user.id %}">收藏的帖子</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'user_follow_comment' user.id %}">点赞的回帖</a>
+                                </li>
+                                <li>
                                     <a href="{% url 'user_follow_user' user.id %}">关注</a>
                                 </li>
                                 <li>

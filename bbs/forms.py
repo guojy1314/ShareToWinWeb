@@ -18,7 +18,7 @@ class PubArticleForm(forms.Form):
                                                 'title': '请选择分类'}))
     content = forms.CharField(label='帖子内容', widget=CKEditorUploadingWidget(),
                               required=False)
-    anonymous = forms.BooleanField(label='匿名提问', required=False)
+    anonymous = forms.BooleanField(label='匿名发帖', required=False)
 
 
 class ArticleCommentForm(forms.Form):

@@ -22,23 +22,7 @@
         {% endif %}
         <div class="row">
             <div class="col-sm-8">
-                <div class="header-box">
-                    <div class="container">
-                        <ul class="nav navbar-nav">
-                            <li><a href="{% url 'ask_question' %}"
-                                   target="_blank">提问</a>
-                            </li>
-                            <li><a href="{% url 'question_list' %}"
-                                   target="_blank">回答</a>
-                            </li>
-                            <li><a href="{% url 'pub_article' %}"
-                                   target="_blank">发帖</a>
-                            </li>
-                            <!-- <li><a href="">写文章</a></li>
-                            <li><a href="">写想法</a></li> -->
-                        </ul>
-                    </div>
-                </div>
+
                 {% cache 300 index_answer %}
                     {% for answer in page.object_list %}
                         <div class="answer-item site-box">
@@ -73,7 +57,7 @@
                                         <h4 class="media-heading"><a
                                                 target="_blank"
                                                 href="{% url 'user_home' answer.author_id %}">
-                                            {{answer.author.nickname }}</a>
+                                            {{ answer.author.nickname }}</a>
                                             <small>
                                                 , {{ answer.author.description }}</small>
                                         </h4>
@@ -83,12 +67,12 @@
                             <div class="question-title">
                                 <h3><a target="_blank"
                                        href="{% url 'question_detail' answer.question_id %}">
-                                    {{answer.question.title }}</a></h3>
+                                    {{ answer.question.title }}</a></h3>
                             </div>
                             <div class="answer-content">
                                 <a target="_blank"
                                    href="{% url 'answer_detail' answer.id %}">
-                                    <p>{{answer.content|safe|striptags|truncatechars:200 }}</p>
+                                    <p>{{ answer.content|safe|striptags|truncatechars:200 }}</p>
                                 </a>
                             </div>
                             <div class="answer-meta">
@@ -96,7 +80,7 @@
                                         class="btn btn-primary btnvote-up btn-sm"
                                         onclick="follow_answer(this, {{ answer.id }})">
                                     <span class="glyphicon glyphicon-triangle-top"></span>
-                                    {{answer.follow_nums }}
+                                    {{ answer.follow_nums }}
                                 </button>
                                 <button type="button"
                                         class="btn btn-default btnvote-down btn-sm"
@@ -106,7 +90,7 @@
                                 <a target="_blank"
                                    href="{% url 'answer_detail' answer.id %}">
                                     <button type="button"
-                                            class="btn btn-default btn-sm">{{answer.comment_nums }} 条评论
+                                            class="btn btn-default btn-sm">{{ answer.comment_nums }} 条评论
                                     </button>
                                 </a>
                                 <!-- <a href="{% url 'answer_detail' answer.id %}"><button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-star"></span>收藏</button></a> -->
@@ -144,20 +128,54 @@
                             <div class="media-body">
                                 <h4 class="media-heading"><a target="_blank"
                                                              href="{% url 'user_home' request.user.id %}">
-                                    {{request.user.nickname }}</a></h4>
+                                    {{ request.user.nickname }}</a></h4>
                                 <p>{{ request.user.description|default_if_none:'' }}</p>
                             </div>
                         </div>
+                        <hr>
+                            <div class="box-wrap">
+                                <div class="box">
+                                <a href="{% url 'ask_question' %}"
+                                                             target="_blank" title="提问">
+                                <i class="far fa-question-circle fa-3x GlobalWrite-navIcon"></i>
+                                <div class="GlobalWrite-navTitle">提问题</div>
+                            </a></div>
+
+                               <div class="box">
+                                <a href="{% url 'question_list' %}" target="_blank"
+                                    title="回答">
+                                    <i class="far fa-edit fa-3x GlobalWrite-navIcon"></i>
+                                <div class="GlobalWrite-navTitle">写回答</div>
+                            </a>
+                               </div>
+
+                                <div class="box">
+                                <a href="{% url 'pub_article' %}" target="_blank"
+                                    title="发帖">
+                                <i class="far fa-file-alt fa-3x GlobalWrite-navIcon"></i>
+                                <div class="GlobalWrite-navTitle">发帖子</div>
+                            </a>
+                                </div>
+
+                            </div>
                         <hr>
                         <div class="">
                             <ul class="nav nav-stacked">
                                 <li><a target="_blank"
                                        href="{% url 'user_collect_answer' request.user.id %}"><span
-                                        class="badge pull-right">{{ request.user.get_collect_answer_nums }}</span><b>我的收藏</b></a>
+                                        class="badge pull-right">{{ request.user.get_collect_answer_nums }}</span><b>我收藏的回答</b></a>
                                 </li>
                                 <li><a target="_blank"
                                        href="{% url 'user_follow_question' request.user.id %}"><span
                                         class="badge pull-right">{{ request.user.get_follow_question_nums }}</span><b>我关注的问题</b></a>
+                                </li>
+                                 <li><a target="_blank"
+                                       href="{% url 'user_collect_article' request.user.id %}"><span
+                                        class="badge pull-right">{{ request.user.get_collect_article_nums }}</span><b>我收藏的帖子</b></a>
+                                </li>
+                                 <li><a target="_blank"
+                                       href="{% url 'user_follow_comment' request.user.id %}"><span
+                                        class="badge pull-right">{{ request.user.get_follow_comment_nums }}</span><b>我点赞的回帖</b></a>
                                 </li>
                             </ul>
                         </div>
