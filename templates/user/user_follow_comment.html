@@ -1,0 +1,75 @@
+{% extends 'user/user_base.html' %}
+
+{% block user_content %}
+
+    <h4>{% if user == request.user %}我点赞的回帖
+        {% else %}{% if user.gender == 'M' %}他{% else %}她{% endif %}点赞的回帖
+        {% endif %}</h4>
+    <hr>
+
+    {% for comment in user_follow_comments_page.object_list %}
+        <div class="trend-item">
+
+            <a href="{% url 'article_detail' comment.article_id %}"><h3>
+                {{ comment.article.title }}</h3></a>
+                <div class="media">
+                    <a href="{% url 'user_home' comment.user_id %}"
+                       class="media-left"><img
+                            width="24" height="24"
+                            src="{{ MEDIA_URL }}{{ comment.user.image }}"
+                            alt="头像"
+                            class="media-object"></a>
+                    <div class="media-body">
+                        <h4 class="media-heading"><a
+                                href="{% url 'user_home' comment.user_id %}">{{ comment.user.nickname }}</a></h4>
+                        <p class="text-muted">
+                            {{ user.description|default_if_none:'' }}</p>
+                    </div>
+                </div>
+            <p class="answer-content"><a
+                    href="{% url 'article_detail' comment.article_id %}">
+                {{ comment.body|safe|striptags|truncatechars:200 }}</a></p>
+            <div class="answer-meta">
+                {% if user == request.user %}
+                    <button type="button" class="btn btn-sm btn-default"
+                            onclick="cancel_follow_comment(this, {{ comment.id }})"><span
+                            class="delete-answer glyphicon glyphicon-trash"></span>
+                        取消点赞
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+
+    {% include 'zhihu/paginator.html' with page=user_collect_answers_page %}
+
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+
+        //取消收藏讨论帖
+        function cancel_follow_comment(dom, comment_id) {
+            old_path = location.pathname;
+            $.ajax({
+                type: 'GET',
+                async: true,
+                url: "{% url 'add_follow_comment' %}",
+                data: {'comment_id': comment_id},
+                cache: false,
+                success: function (data) {
+                    if (data.status == 'success') {
+                        $(dom).parent().parent().remove();
+                    } else {
+                        location.href = "{% url 'user_login' %}" + '?next=' + old_path;
+                    }
+                },
+                error: function (xhr, error_message, error) {
+                    alert('请求出错');
+                },
+            });
+        }
+
+    </script>
+
+{% endblock %}

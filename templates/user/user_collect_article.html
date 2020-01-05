@@ -1,0 +1,88 @@
+{% extends 'user/user_base.html' %}
+
+{% block user_content %}
+
+    <h4>{% if user == request.user %}我收藏的讨论帖
+        {% else %}{% if user.gender == 'M' %}他{% else %}她{% endif %}收藏的讨论帖
+        {% endif %}</h4>
+    <hr>
+
+    {% for article in user_collect_articles_page.object_list %}
+        <div class="trend-item">
+
+            <a href="{% url 'article_detail' article.id %}"><h3>
+                {{ article.title }}</h3></a>
+            {% if article.is_anonymous %}
+                <div class="media">
+                    <div class="media-left"><img width="24" height="24"
+                                                 src="{{ MEDIA_URL }}image/default_user.png"
+                                                 alt="头像" class="media-object">
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading text-muted">匿名发帖</h4>
+                    </div>
+                </div>
+            {% else %}
+                <div class="media">
+                    <a href="{% url 'user_home' article.author_id %}"
+                       class="media-left"><img
+                            width="24" height="24"
+                            src="{{ MEDIA_URL }}{{ article.author.image }}"
+                            alt="头像"
+                            class="media-object"></a>
+                    <div class="media-body">
+                        <h4 class="media-heading"><a
+                                href="{% url 'user_home' article.author_id %}">{{ article.author.nickname }}</a></h4>
+                        <p class="text-muted">
+                            {{ author.description|default_if_none:'' }}</p>
+                    </div>
+                </div>
+            {% endif %}
+            <p class="text-muted">{{ article.get_collect_nums }} 人收藏了该帖子</p>
+            <p class="answer-content"><a
+                    href="{% url 'article_detail' article.id %}">
+                {{ article.content|safe|striptags|truncatechars:200 }}</a></p>
+            <div class="answer-meta">
+                {% if user == request.user %}
+                    <button type="button" class="btn btn-sm btn-default"
+                            onclick="cancel_collect_article(this, {{ article.id }})"><span
+                            class="delete-answer glyphicon glyphicon-trash"></span>
+                        取消收藏
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+
+    {% include 'zhihu/paginator.html' with page=user_collect_answers_page %}
+
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+
+        //取消收藏讨论帖
+        function cancel_collect_article(dom, article_id) {
+            old_path = location.pathname;
+            $.ajax({
+                type: 'GET',
+                async: true,
+                url: "{% url 'collect_article' %}",
+                data: {'article_id': article_id},
+                cache: false,
+                success: function (data) {
+                    if (data.status == 'success') {
+                        $(dom).parent().parent().remove();
+                    } else {
+                        location.href = "{% url 'user_login' %}" + '?next=' + old_path;
+                    }
+                },
+                error: function (xhr, error_message, error) {
+                    alert('请求出错');
+                },
+            });
+        }
+
+    </script>
+
+{% endblock %}
