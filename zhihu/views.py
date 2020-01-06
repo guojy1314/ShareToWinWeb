@@ -17,6 +17,7 @@ from user.models import User
 from .forms import CommentForm, AskQuestionForm, AnswerForm
 from .models import Question, Answer, Topic, UserFollowAnswer, AnswerComment, \
     UserFollowQuestion, UserCollectAnswer
+from bbs.models import Article
 
 
 def index(request):
@@ -654,10 +655,12 @@ def answer_question(request, question_id):
 
 @cache_page(5 * 60, key_prefix='search')
 def search(request):
-    '''简单的搜索功能, 使用数据库模糊查询, 记录较多时性能应该不好吧'''
+    '''简单的搜索功能, 使用数据库模糊查询，
+    使用jieba对搜索关键词进行分词，
+    然后使用Q对象进行模糊查询'''
     search_type = request.GET.get('search_type')
     keywords = request.GET.get('keywords', '')
-    search_type_list = ['question', 'answer', 'topic', 'user']
+    search_type_list = ['question', 'answer', 'topic', 'user', 'article']
 
     if not search_type:
         return redirect(reverse('index'))
@@ -670,10 +673,6 @@ def search(request):
 
     # jieba分词(中文)
     seg_list = jieba.cut(keywords, cut_all=False)  # 返回generator迭代器
-
-    # 2018.7.17
-    # 搜索功能直接对数据库搜索的话, 在数据库中,在要搜索的字段中上建立全文索引, 加快匹配速度
-    # 使用全文检索sql而不是模糊查询, 模糊查询太慢了, 全文检索还提供检索的匹配度
 
     if search_type == 'question':
         # Q对象
@@ -699,6 +698,13 @@ def search(request):
         for word in seg_list:
             q = q | Q(nickname__icontains=word) | Q(username__icontains=word)
         search_results = User.objects.filter(q).order_by('id')[:100]
+
+    if search_type == 'article':
+        # Q对象
+        q = Q()
+        for word in seg_list:
+            q = q | Q(title__icontains=word)
+        search_results = Article.objects.filter(q).order_by('id')[:100]
 
     search_results_page = paginator_helper(request, search_results,
                                            per_page=settings.SEARCH_PER_PAGE)

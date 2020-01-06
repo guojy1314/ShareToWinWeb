@@ -43,6 +43,9 @@
                     href="{% url 'article_detail' article.id %}">
                 {{ article.content|safe|striptags|truncatechars:200 }}</a></p>
             <div class="answer-meta">
+            <p class="text-muted">发布于：{{ article.pub_time|date:'Y-m-d' }} &middot;
+                {{ article.get_comment_nums }} 个回帖
+
                 {% if user == request.user %}
                     <button type="button" class="btn btn-sm btn-default"
                             onclick="cancel_collect_article(this, {{ article.id }})"><span
@@ -50,6 +53,7 @@
                         取消收藏
                     </button>
                 {% endif %}
+            </p>
             </div>
         </div>
     {% endfor %}

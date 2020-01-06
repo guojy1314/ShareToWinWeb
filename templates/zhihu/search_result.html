@@ -19,6 +19,8 @@
                         的话题搜索结果</b></h4>{% endif %}
                     {% if search_type == 'user' %}<h4><b>"{{ keywords }}"
                         的用户搜索结果</b></h4>{% endif %}
+                    {% if search_type == 'article' %}<h4><b>"{{ keywords }}"
+                        的帖子搜索结果</b></h4>{% endif %}
                     <hr>
                     {% if search_type == 'answer' %}
                         {% for answer in search_results_page.object_list %}
@@ -82,6 +84,21 @@
                                     个回答
                                     &middot; {{ question.get_follow_nums }}
                                     个关注</p>
+                            </div>
+                        {% empty %}
+                            <p>暂时没有搜索结果</p>
+                        {% endfor %}
+
+                        {% elif search_type == 'article' %}
+                        {% for article in search_results_page %}
+                            <div class="search-item">
+                                <h3><a target="_blank"
+                                       href="{% url 'article_detail' article.id %}">
+                                    {{ article.title }}</a></h3>
+                                <p class="text-muted">{{ article.get_comment_nums }}
+                                    个回答
+                                    &middot; {{ article.get_collect_nums }}
+                                    个收藏</p>
                             </div>
                         {% empty %}
                             <p>暂时没有搜索结果</p>

@@ -66,6 +66,17 @@
                 </h3>
             </div>
 
+                        <!-- 发布了帖子 -->
+        {% elif obj|object_class_name == 'Article' %}
+            <div class="trend-item">
+                <p class="text-muted">发布了帖子<span
+                        class="right-info">{{ obj.pub_time|date:"Y年m月d日" }}</span>
+                </p>
+                <h3>
+                    <a href="{% url 'article_detail' obj.id %}">{{ obj.title }}</a>
+                </h3>
+            </div>
+
             <!-- 赞同了回答 -->
         {% elif obj|object_class_name == 'UserFollowAnswer' %}
             <div class="trend-item">
@@ -194,6 +205,54 @@
                         </button>
                     </a>
                     <!-- <a href="{% url 'answer_detail' obj.answer_id %}"><button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-star"></span>收藏</button></a> -->
+                </div>
+            </div>
+
+             <!-- 收藏了帖子 -->
+        {% elif obj|object_class_name == 'UserCollectArticle' %}
+            <div class="trend-item">
+                <p class="text-muted">收藏了帖子<span
+                            class="right-info">{{ obj.add_time|date:"Y年m月d日" }}</span>
+                </p>
+                <h3>
+                    <a href="{% url 'article_detail' obj.article_id %}">
+                        {{ obj.article.title }}</a></h3>
+                {% if obj.article.is_anonymous %}
+                    <div class="media">
+                        <div class="media-left"><img width="24" height="24"
+                                                     src="{{ MEDIA_URL }}image/default_user.png"
+                                                     alt="头像"
+                                                     class="media-object"></div>
+                        <div class="media-body">
+                            <h4 class="media-heading text-muted">匿名回答</h4>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="media">
+                        <a href="{% url 'user_home' obj.article.author_id %}"
+                           class="media-left"><img
+                                width="24" height="24"
+                                src="
+
+                                        {{ MEDIA_URL }}{{ obj.article.author.image }}"
+                                alt="头像"
+                                class="media-object"></a>
+                        <div class="media-body">
+                            <h4 class="media-heading"><a
+                                    href="{% url 'user_home' obj.article.author_id %}">
+                                {{ obj.article.author.nickname }}</a></h4>
+                            <p class="text-muted">
+                                {{ obj.article.author.description|default_if_none:'' }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+                <p class="answer-content"><a
+                        href="{% url 'answer_detail' obj.answer_id %}">
+                    {{ obj.article.content|safe|striptags|truncatechars:200 }}</a>
+                </p>
+                <div class="answer-meta">
+                    <p class="text-muted">发布于：{{ obj.article.pub_time|date:'Y-m-d' }} &middot;
+                        {{ obj.article.get_comment_nums }} 个回帖</p>
                 </div>
             </div>
 

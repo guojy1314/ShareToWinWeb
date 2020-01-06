@@ -71,9 +71,9 @@ class Article(models.Model):
         '''获取收藏者数量'''
         return self.usercollectarticle_set.count()
 
-    # def get_comment_nums(self):
-    #     '''获取回帖评论数量'''
-    #     return self.comment.count()
+    def get_comment_nums(self):
+        '''获取回帖评论数量'''
+        return self.comment.all().count()
 
 
 def get_sentinel_article():

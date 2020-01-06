@@ -148,12 +148,15 @@ def user_home(request, user_id):
 
     user_answers = user.answer_set.all()
     user_questions = user.question_set.all()
+    user_articles = user.article_set.all()
     user_follow_answers = user.userfollowanswer_set.all()
     user_collect_answers = user.usercollectanswer_set.all()
+    user_collect_articles = user.usercollectarticle_set.all()
     user_follow_questions = user.userfollowquestion_set.all()
     # 使用itertools.chain合并多个queryset, 反应用户的动态
     user_trend = chain(user_answers, user_questions, user_follow_answers,
-                       user_collect_answers, user_follow_questions)
+                       user_collect_answers, user_follow_questions,
+                       user_articles, user_collect_articles)
     user_trend_sorted = sorted(user_trend, key=get_time, reverse=True)
     # 分页
     user_trend_sorted_page = paginator_helper(request, user_trend_sorted,
