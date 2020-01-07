@@ -247,7 +247,7 @@
                     </div>
                 {% endif %}
                 <p class="answer-content"><a
-                        href="{% url 'answer_detail' obj.answer_id %}">
+                        href="{% url 'article_detail' obj.article_id %}">
                     {{ obj.article.content|safe|striptags|truncatechars:200 }}</a>
                 </p>
                 <div class="answer-meta">

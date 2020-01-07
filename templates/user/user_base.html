@@ -134,6 +134,10 @@
                             <a href="{% url 'user_follow_question' user.id %}"><span
                                     class="badge pull-right">{{ user.get_follow_question_nums }}</span>关注的问题</a>
                         </li>
+                        <li>
+                            <a href="{% url 'user_collect_article' user.id %}"><span
+                                    class="badge pull-right">{{ user.get_collect_article_nums }}</span>收藏的帖子</a>
+                        </li>
                     </div>
                 </div>
             </div>

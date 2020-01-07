@@ -23,9 +23,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'j^ae0_6+2%j_$@@a%=j2c7qa@%2pdt60v1l0lo!fv$xw11@n8x'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# # 本地开发时
+# DEBUG = True
+
+# 部署上线时
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.yidishali.cn', '127.0.0.1']
 
 
 # Application definition
@@ -146,6 +150,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+# 静态文件收集目录
+STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+
 
 
 # 自定用户模型
