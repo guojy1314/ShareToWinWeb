@@ -29,7 +29,7 @@ SECRET_KEY = 'j^ae0_6+2%j_$@@a%=j2c7qa@%2pdt60v1l0lo!fv$xw11@n8x'
 # 部署上线时
 DEBUG = True
 
-ALLOWED_HOSTS = ['.yidishali.cn', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
