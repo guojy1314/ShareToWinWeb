@@ -27,7 +27,7 @@ SECRET_KEY = 'j^ae0_6+2%j_$@@a%=j2c7qa@%2pdt60v1l0lo!fv$xw11@n8x'
 # DEBUG = True
 
 # 部署上线时
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
