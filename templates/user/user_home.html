@@ -212,7 +212,7 @@
         {% elif obj|object_class_name == 'UserCollectArticle' %}
             <div class="trend-item">
                 <p class="text-muted">收藏了帖子<span
-                            class="right-info">{{ obj.add_time|date:"Y年m月d日" }}</span>
+                            class="right-info">{{ obj.pub_time|date:"Y年m月d日" }}</span>
                 </p>
                 <h3>
                     <a href="{% url 'article_detail' obj.article_id %}">

@@ -20,6 +20,7 @@ from .forms import RegisterForm, LoginForm, ForgetPwdForm, UserProfileForm, \
     ChangePasswordForm, ChangeEmailForm
 from .models import User, CheckCode, UserRelationship
 from .tasks import send_email
+from bbs.models import Article
 
 
 class CustomModelBackend(ModelBackend):
@@ -130,7 +131,7 @@ def resend_confirm_email(request):
 
 def get_time(obj):
     '''返回对象的创建时间, 在sorted中以对象的创建时间比较'''
-    if isinstance(obj, Answer) or isinstance(obj, Question):
+    if isinstance(obj, Answer) or isinstance(obj, Question) or isinstance(obj, Article):
         return obj.pub_time
     else:
         return obj.add_time
