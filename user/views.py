@@ -137,7 +137,7 @@ def get_time(obj):
         return obj.add_time
 
 
-@cache_page(60, key_prefix='user_home')
+@cache_page(60*1, key_prefix='user_home')
 def user_home(request, user_id):
     '''用户主页'''
     user = get_object_or_404(User, id=user_id)
@@ -170,7 +170,7 @@ def user_home(request, user_id):
     return render(request, 'user/user_home.html', context)
 
 
-@cache_page(60, key_prefix='user_answer')
+@cache_page(60*1, key_prefix='user_answer')
 def user_answer(request, user_id):
     '''用户主页--回答'''
     user = get_object_or_404(User, id=user_id)
@@ -184,7 +184,7 @@ def user_answer(request, user_id):
     return render(request, 'user/user_answer.html', context)
 
 
-@cache_page(60, key_prefix='user_question')
+@cache_page(60*1, key_prefix='user_question')
 def user_question(request, user_id):
     '''用户主页--提问'''
     user = get_object_or_404(User, id=user_id)
@@ -198,7 +198,7 @@ def user_question(request, user_id):
     return render(request, 'user/user_question.html', context)
 
 
-@cache_page(60)
+# @cache_page(60*1)
 def user_collect_answer(request, user_id):
     '''用户主页--收藏的回答'''
     user = get_object_or_404(User, id=user_id)
@@ -214,7 +214,7 @@ def user_collect_answer(request, user_id):
     return render(request, 'user/user_collect_answer.html', context)
 
 
-@cache_page(60)
+# @cache_page(60*1)
 def user_collect_article(request, user_id):
     '''用户主页--收藏的帖子'''
     user = get_object_or_404(User, id=user_id)
@@ -230,7 +230,7 @@ def user_collect_article(request, user_id):
     return render(request, 'user/user_collect_article.html', context)
 
 
-@cache_page(60)
+# @cache_page(60*1)
 def user_follow_topic(request, user_id):
     '''用户主页--关注话题'''
     user = get_object_or_404(User, id=user_id)
@@ -256,7 +256,7 @@ def user_follow_topic(request, user_id):
     return render(request, 'user/user_follow_topic.html', context)
 
 
-@cache_page(60)
+# @cache_page(60*1)
 def user_follow_question(request, user_id):
     '''用户主页--关注问题'''
     user = get_object_or_404(User, id=user_id)
@@ -274,7 +274,7 @@ def user_follow_question(request, user_id):
     return render(request, 'user/user_follow_question.html', context)
 
 
-@cache_page(60)
+# @cache_page(60*1)
 def user_follow_comment(request, user_id):
     '''用户主页--点赞回答'''
     user = get_object_or_404(User, id=user_id)
@@ -292,7 +292,7 @@ def user_follow_comment(request, user_id):
     return render(request, 'user/user_follow_comment.html', context)
 
 
-@cache_page(60)
+# @cache_page(60*1)
 def user_follow_user(request, user_id):
     '''用户主页--用户关注'''
     user = get_object_or_404(User, id=user_id)
@@ -325,7 +325,7 @@ def user_follow_user(request, user_id):
     return render(request, 'user/user_follow_user.html', context)
 
 
-@cache_page(60)
+# @cache_page(60*1)
 def user_followed_by_user(request, user_id):
     '''用户主页--用户关注者'''
     user = get_object_or_404(User, id=user_id)
@@ -357,7 +357,7 @@ def user_followed_by_user(request, user_id):
     return render(request, 'user/user_followed_user.html', context)
 
 
-@cache_page(60)
+# @cache_page(60*1)
 def user_topic_answer(request, user_id, topic_id):
     '''用户在话题下的回答'''
     user = get_object_or_404(User, id=user_id)

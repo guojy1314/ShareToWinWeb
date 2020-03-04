@@ -27,7 +27,7 @@ SECRET_KEY = 'j^ae0_6+2%j_$@@a%=j2c7qa@%2pdt60v1l0lo!fv$xw11@n8x'
 # DEBUG = True
 
 # 部署上线时
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -190,8 +190,8 @@ CACHES = {
         'LOCATION': 'redis://62.234.190.102:6379/1',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'SOCKET_CONNECT_TIMEOUT': 10,
-            'SOCKET_TIMEOUT': 10,
+            'SOCKET_CONNECT_TIMEOUT': 20,
+            'SOCKET_TIMEOUT': 20,
             'CONNECTION_POOL_KWARGS': {'max_connections': 100},
         },
 

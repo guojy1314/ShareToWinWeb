@@ -9,9 +9,8 @@ from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-# cache
 from django.views.decorators.cache import cache_page
-
+from helper.dfa import DFAFilter
 from helper.paginator_helper import paginator_helper
 from user.models import User
 from .forms import CommentForm, AskQuestionForm, AnswerForm
@@ -95,7 +94,7 @@ def question_detail(request, question_id):
     return render(request, 'zhihu/question_detail.html', context)
 
 
-@cache_page(5 * 60, key_prefix='follow_question_user')
+# @cache_page(5 * 60, key_prefix='follow_question_user')
 def follow_question_user(request, question_id):
     '''关注问题的用户'''
     question = get_object_or_404(Question, id=question_id)
@@ -523,12 +522,15 @@ def comment_answer(request, answer_id):
     if request.method == 'POST':
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
+            dfa=DFAFilter()
             comment = comment_form.cleaned_data.get('comment')
+            comment = dfa.run(comment)
             answer = get_object_or_404(Answer, id=answer_id)
             answer_comment = AnswerComment(user=request.user, answer=answer,
                                            comment=comment)
             answer_comment.save()
             return JsonResponse({'status': 'success', 'message': '你的评论已提交'})
+            # return redirect(answer)
         else:
             return JsonResponse({'status': 'fail', 'message': '评论不能为空'})
 

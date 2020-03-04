@@ -32,6 +32,7 @@ class User(AbstractUser):
     )
     nickname = models.CharField('昵称', max_length=40, null=True, blank=True)
     email = models.EmailField('邮箱')
+    # OpenID = models.CharField('OpenID', null=True, blank=True)
     gender = models.CharField('性别', choices=gender_choices, max_length=1,
                               default='M')
     college = models.CharField('学院', max_length=100, null=True, blank=True, choices=college_choices,

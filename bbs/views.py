@@ -16,7 +16,7 @@ from .models import Article, Comment, ArticleTopic,  \
     UserCollectArticle, UserFollowComment
 
 
-@cache_page(5 * 60, key_prefix='article_list')
+# @cache_page(5 * 60, key_prefix='article_list')
 def article_list(request):
     '''帖子列表'''
     articles = Article.objects.all().order_by('-pub_time').annotate(
