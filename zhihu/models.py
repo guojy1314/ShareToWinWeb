@@ -44,6 +44,7 @@ class Question(models.Model):
     recommend = models.BooleanField('是否推荐', default=False)
     read_nums = models.IntegerField('浏览量', default=0)
     is_anonymous = models.BooleanField('匿名问题', default=False)
+    is_suspended = models.BooleanField('是否被冻结', default=False)
 
     def __str__(self):
         return self.title
@@ -86,6 +87,7 @@ class Answer(models.Model):
     voteup_nums = models.IntegerField('认同数', default=0)
     votedown_nums = models.IntegerField('不认同数', default=0)
     is_anonymous = models.BooleanField('匿名回答', default=False)
+    is_suspended = models.BooleanField('是否被冻结', default=False)
 
     def get_follow_nums(self):
         '''获取回答点赞数'''

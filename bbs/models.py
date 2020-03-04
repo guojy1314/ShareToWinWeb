@@ -46,6 +46,7 @@ class Article(models.Model):
     recommend = models.BooleanField('是否推荐', default=False)
     read_nums = models.IntegerField('浏览量', default=0)
     is_anonymous = models.BooleanField('匿名问题', default=False)
+    is_suspended = models.BooleanField('是否被冻结', default=False)
 
     def __str__(self):
         return self.title

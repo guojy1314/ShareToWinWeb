@@ -32,6 +32,9 @@
                     </div>
                     <p>{{ question.content|safe }}</p>
                     <div class="question-meta">
+                    {% if question.is_suspended %}
+                            <p class="text-danger"><span><strong>该问题已被冻结，暂时无法回答。</strong></span></p>
+                        {% else %}
                         <button type="button" class="btn btn-primary"
                                 onclick="follow_question(this, {{ question.id }})">
                             {% if has_follow_question %}已关注{% else %}关注问题{%endif %}
@@ -40,7 +43,8 @@
                             <button type="button" class="btn btn-default">写回答
                             </button>
                         </a>
-                        <span>{{ question.pub_time }}</span>
+                    {% endif %}
+                        <span>提问时间：{{ question.pub_time }}</span>
                     </div>
                 </div>
             </div>

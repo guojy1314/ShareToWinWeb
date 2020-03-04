@@ -39,9 +39,9 @@
                                 <div class="media-body">
                                     <h4 class="media-heading"><a target="_blank"
                                                                  href="{% url 'user_home' answer.author_id %}">
-                                        {{answer.author.username }}</a>
+                                        {{ answer.author.username }}</a>
                                     </h4>
-                                    <p class="text-muted">{{answer.author.description|default_if_none:''}}</p>
+                                    <p class="text-muted">{{ answer.author.description|default_if_none:'' }}</p>
                                 </div>
                             </div>
                         {% endif %}
@@ -64,7 +64,7 @@
                                 <span class="glyphicon glyphicon-triangle-bottom"></span>
                             </button>
                             <a href="#comment-form">
-                                <button type="button" class="btn btn-default">{{answer.get_comment_nums }} 条评论
+                                <button type="button" class="btn btn-default">{{ answer.get_comment_nums }} 条评论
                                 </button>
                             </a>
                             <button type="button" class="btn btn-default"
@@ -91,7 +91,6 @@
                     <hr>
 
                     <div id="comment-list">
-
                         {% for comment in page.object_list %}
                             <div class="media">
                                 <a target="_blank"
@@ -118,26 +117,30 @@
 
                         {% include 'zhihu/paginator.html' %}
 
-                        <form action="{% url 'comment_answer' answer.id %}"
-                              class='comment-form' id="comment-form"
-                              method='post'>
-                            {% csrf_token %}
-                            {% for field in comment_form %}
-                                <div class="form-group">
-                                    {{ field.errors }}
-                                    {{ field.label_tag }}
-                                    {{ field.as_widget }}
+                        {% if answer.is_suspended %}
+                            <p class="text-danger"><span><strong>该回答已被冻结，暂时无法评论。</strong></span></p>
+                        {% else %}
+                            <form action="{% url 'comment_answer' answer.id %}"
+                                  class='comment-form' id="comment-form"
+                                  method='post'>
+                                {% csrf_token %}
+                                {% for field in comment_form %}
+                                    <div class="form-group">
+                                        {{ field.errors }}
+                                        {{ field.label_tag }}
+                                        {{ field.as_widget }}
+                                    </div>
+                                {% endfor %}
+                                <p class="alert alert-success hidden"
+                                   id="submit-info"></p>
+                                <div class="text-right">
+                                    <button id="comment-submit"
+                                            class="btn btn-primary"
+                                            type="submit">评论
+                                    </button>
                                 </div>
-                            {% endfor %}
-                            <p class="alert alert-success hidden"
-                               id="submit-info"></p>
-                            <div class="text-right">
-                                <button id="comment-submit"
-                                        class="btn btn-primary"
-                                        type="submit">评论
-                                </button>
-                            </div>
-                        </form>
+                            </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>

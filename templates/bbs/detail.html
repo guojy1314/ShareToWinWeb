@@ -72,6 +72,9 @@
         <div class="row">
             <div class="col-sm-8">
                 <div class="site-box">
+                {% if article.is_suspended %}
+                <p class="text-danger"><span><strong>该讨论帖已被冻结，暂时无法回帖。</strong></span></p>
+                {% else %}
                     {% if user.is_authenticated %}
                         <form action="{% url 'post_comment' article.id %}"
                               method='post'>
@@ -99,6 +102,7 @@
                         </h5>
                         <br>
                     {% endif %}
+                {% endif %}
                     <div class="clearfix">
                         <strong>{{ page.paginator.count }} 个回帖</strong>
 
