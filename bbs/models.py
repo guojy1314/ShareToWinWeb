@@ -17,22 +17,16 @@ class ArticleTopic(models.Model):
                                    blank=True)
     add_time = models.DateTimeField('添加时间', auto_now_add=True)
 
-    # image = models.ImageField('话题图片', upload_to='image/%Y/%m/',
-    #                           default='image/default_topic.jpg', null=True,
-    #                           blank=True)
-    #
-    # users = models.ManyToManyField(User, blank=True, verbose_name='用户话题')
-
     def __str__(self):
         return self.name
-
-    # def get_user_nums(self):
-    #     #     '''获取关注者数量'''
-    #     #     return self.users.count()
 
     def get_article_nums(self):
         '''获取文章话题的发帖数'''
         return self.article_set.count()
+
+    class Meta:
+        verbose_name = '讨论帖类别'
+        verbose_name_plural = '讨论帖类别'
 
 
 class Article(models.Model):
@@ -53,6 +47,8 @@ class Article(models.Model):
 
     class Meta:
         ordering = ['-pub_time']
+        verbose_name = '讨论帖'
+        verbose_name_plural = '讨论帖'
 
     # def get_comment_nums(self):
     #     '''获取回帖评论数量'''
@@ -125,6 +121,11 @@ class Comment(MPTTModel):
 
     def __str__(self):
         return self.body[:20]
+
+    class Meta:
+        verbose_name = '回帖'
+        verbose_name_plural = '回帖'
+
 
 
 class UserCollectArticle(models.Model):

@@ -32,6 +32,10 @@ class Topic(models.Model):
         '''获取话题的问题数'''
         return self.question_set.count()
 
+    class Meta:
+        verbose_name = '话题'
+        verbose_name_plural = '话题'
+
 
 class Question(models.Model):
     '''问题模型'''
@@ -70,6 +74,10 @@ class Question(models.Model):
         '''获取关注者数量'''
         return self.userfollowquestion_set.count()
 
+    class Meta:
+        verbose_name = '问题'
+        verbose_name_plural = '问题'
+
 
 def get_sentinel_question():
     return Question.objects.get_or_create(title='deleted question')[0]
@@ -104,6 +112,10 @@ class Answer(models.Model):
     def __str__(self):
         return self.content[:50]
 
+    class Meta:
+        verbose_name = '回答'
+        verbose_name_plural = '回答'
+
 
 class AnswerComment(models.Model):
     '''回答评论模型'''
@@ -116,6 +128,10 @@ class AnswerComment(models.Model):
     def __str__(self):
         return self.comment[:50]
 
+    class Meta:
+        verbose_name = '回答评论'
+        verbose_name_plural = '回答评论'
+
 
 class UserFollowQuestion(models.Model):
     '''用户关注问题模型'''
@@ -123,6 +139,10 @@ class UserFollowQuestion(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE,
                                  verbose_name='问题')
     add_time = models.DateTimeField('添加时间', auto_now_add=True)
+
+    class Meta:
+        verbose_name = '用户关注问题'
+        verbose_name_plural = '用户关注问题'
 
 
 class UserFollowAnswer(models.Model):
@@ -132,6 +152,10 @@ class UserFollowAnswer(models.Model):
                                verbose_name='回答')
     add_time = models.DateTimeField('添加时间', auto_now_add=True)
 
+    class Meta:
+        verbose_name = '用户点赞回答'
+        verbose_name_plural = '用户点赞回答'
+
 
 class UserCollectAnswer(models.Model):
     '''用户收藏回答模型'''
@@ -139,3 +163,7 @@ class UserCollectAnswer(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE,
                                verbose_name='回答')
     add_time = models.DateTimeField('添加时间', auto_now_add=True)
+
+    class Meta:
+        verbose_name = '用户收藏回答'
+        verbose_name_plural = '用户收藏回答'

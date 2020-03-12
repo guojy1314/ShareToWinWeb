@@ -9,8 +9,9 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 
 
-# 如果发送邮件出错， 等10s再次发送， 最多重试3次
+
 # 修改发送邮件的方法，celery将任务放在redis中会序列化对象, 对象不能直接序列化，发送邮件的参数最好直接传值，不要传对象过来
+# 如果发送邮件出错， 等10s再次发送， 最多重试3次
 @celery_app.task(bind=True, max_retries=3, default_retry_delay=10)
 def send_email(self, subject, template, to, **kwargs):
     '''发送邮件'''

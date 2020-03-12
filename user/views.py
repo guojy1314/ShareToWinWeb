@@ -50,7 +50,6 @@ def register(request):
             user.gender = register_form.cleaned_data.get('gender')
             user.college = register_form.cleaned_data.get('college')
             user.save()
-
             # 生成账户确认签名
             token = user.generate_confirm_token()
             # 发送账户激活链接邮件
@@ -62,7 +61,6 @@ def register(request):
             return redirect(reverse('user_login'))
         else:
             pass
-
     context = {}
     context['register_form'] = register_form
     return render(request, 'user/register.html', context)

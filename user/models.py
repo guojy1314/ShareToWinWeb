@@ -148,6 +148,10 @@ class CheckCode(models.Model):
     def __str__(self):
         return self.check_code
 
+    class Meta:
+        verbose_name = '验证码'
+        verbose_name_plural = '验证码'
+
 
 class UserRelationship(models.Model):
     '''用户相关关注中间模型, 显式定义'''
@@ -156,3 +160,8 @@ class UserRelationship(models.Model):
     to_user = models.ForeignKey(User, on_delete=models.CASCADE,
                                 related_name='from_user_set', verbose_name='关注')
     add_time = models.DateTimeField('关注时间', auto_now_add=True)
+
+    class Meta:
+        verbose_name = '用户关系'
+        verbose_name_plural = '用户关系'
+
